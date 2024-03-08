@@ -31,13 +31,48 @@ public class Function {
         context.getLogger().info("Java HTTP trigger processed a request.");
 
         // Parse query parameter
-        final String query = request.getQueryParameters().get("name");
-        final String name = request.getBody().orElse(query);
+        //final String query = request.getQueryParameters().get("name");
+        //final String name = request.getBody().orElse(query);
 
-        if (name == null) {
-            return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("Please pass a name on the query string or in the request body").build();
+        final String name = request.getQueryParameters().get("name");
+        final String id = request.getQueryParameters().get("id");
+
+        if (id != null) {
+            return request.createResponseBuilder(HttpStatus.OK).body(PersonData.getNewPerson(id)).build();
+        } if (name != null) {
+            return request.createResponseBuilder(HttpStatus.OK).body("Hola, " + name).build();
         } else {
-            return request.createResponseBuilder(HttpStatus.OK).body("Hello, " + name).build();
+            return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("Please pass a name on the query string or in the request body").build();
         }
+    }
+
+    static class PersonData {
+        public static PersonData getNewPerson(String id) {
+            try {
+                int idInt = Integer.parseInt(id);
+                return new PersonData(
+                    "Nombre " + id, 
+                    10.0 * idInt, 
+                    (idInt % 3 == 0), 
+                    id, 
+                    "Persona " + id
+                );
+            } catch (Exception e) {
+                return new PersonData("Persona por defecto", 0.0, true, "0", "Persona por defecto");
+            }
+        }
+        public PersonData (String name, Double price, Boolean isNew, String imageId, String description) {
+            this.name = name;
+            this.price = price;
+            this.isNew = isNew;
+            this.imageId = imageId;
+            this.description = description;
+        }
+
+        public String name;
+        public Double price;
+        public Boolean isNew;
+        public String imageId;
+        public String description;
     }
 }
