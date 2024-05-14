@@ -1,5 +1,6 @@
 package com.function.gdpc215.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,7 +10,7 @@ import org.json.JSONObject;
 
 import com.function.gdpc215.utils.LogUtils;
 
-public class BillDetailExtendedEntity{
+public class BillDetailExtendedEntity implements Serializable {
     public BillDetailEntity billDetailsEntity;
 
     public String strName;

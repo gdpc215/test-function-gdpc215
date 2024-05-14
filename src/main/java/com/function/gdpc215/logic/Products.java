@@ -71,20 +71,20 @@ public class Products {
             // Extract parameters from JSON
             // Prepare statement
             PreparedStatement spCall = connection.prepareCall("{ call spMenuProducts_Insert(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }");
-            spCall.setString(1, json.getString("businessId"));
-            spCall.setString(2, json.getString("categoryId"));
-            spCall.setString(3, json.getString("strName"));
-            spCall.setString(4, json.getString("strDescription"));
+            spCall.setString(1, json.optString("businessId"));
+            spCall.setString(2, json.optString("categoryId"));
+            spCall.setString(3, json.optString("strName"));
+            spCall.setString(4, json.optString("strDescription"));
             spCall.setDouble(5, json.getDouble("amtPrice"));
             spCall.setInt(6, json.getInt("amtPreparationTime"));
-            spCall.setString(7, json.getString("flgDispatchType"));
+            spCall.setString(7, json.optString("flgDispatchType"));
             spCall.setDouble(8, json.getDouble("amtMinSaleWeight"));
-            spCall.setString(9, json.getString("strMinSaleWeightMeasure"));
-            spCall.setBoolean(10, json.getBoolean("flgHasStock"));
-            spCall.setString(11, json.getString("strImagePath"));
-            spCall.setString(12, json.getString("strAllergies"));
-            spCall.setString(13, json.getString("strCaloricInfo"));
-            spCall.setString(14, json.getString("strAvailabilityArray"));
+            spCall.setString(9, json.optString("strMinSaleWeightMeasure"));
+            spCall.setBoolean(10, json.optBoolean("flgHasStock"));
+            spCall.setString(11, json.optString("strImagePath"));
+            spCall.setString(12, json.optString("strAllergies"));
+            spCall.setString(13, json.optString("strCaloricInfo"));
+            spCall.setString(14, json.optString("strAvailabilityArray"));
     
             // Execute insert operation
             spCall.executeUpdate();
@@ -106,20 +106,20 @@ public class Products {
             
             // Prepare statement
             PreparedStatement spCall = connection.prepareCall("{ call spMenuProducts_Update(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }");
-            spCall.setString(1, json.getString("id"));
-            spCall.setString(2, json.getString("categoryId"));
-            spCall.setString(3, json.getString("strName"));
-            spCall.setString(4, json.getString("strDescription"));
-            spCall.setDouble(5, Double.parseDouble(json.getString("amtPrice")));
-            spCall.setInt(6, Integer.parseInt(json.getString("amtPreparationTime")));
-            spCall.setString(7, json.getString("flgDispatchType"));
-            spCall.setDouble(8, Double.parseDouble(json.getString("amtMinSaleWeight")));
-            spCall.setString(9, json.getString("strMinSaleWeightMeasure"));
-            spCall.setBoolean(10, Boolean.parseBoolean(json.getString("flgHasStock")));
-            spCall.setString(11, json.getString("strImagePath"));
-            spCall.setString(12, json.getString("strAllergies"));
-            spCall.setString(13, json.getString("strCaloricInfo"));
-            spCall.setString(14, json.getString("strAvailabilityArray"));
+            spCall.setString(1, json.optString("id"));
+            spCall.setString(2, json.optString("categoryId"));
+            spCall.setString(3, json.optString("strName"));
+            spCall.setString(4, json.optString("strDescription"));
+            spCall.setDouble(5, Double.parseDouble(json.optString("amtPrice")));
+            spCall.setInt(6, Integer.parseInt(json.optString("amtPreparationTime")));
+            spCall.setString(7, json.optString("flgDispatchType"));
+            spCall.setDouble(8, Double.parseDouble(json.optString("amtMinSaleWeight")));
+            spCall.setString(9, json.optString("strMinSaleWeightMeasure"));
+            spCall.setBoolean(10, Boolean.parseBoolean(json.optString("flgHasStock")));
+            spCall.setString(11, json.optString("strImagePath"));
+            spCall.setString(12, json.optString("strAllergies"));
+            spCall.setString(13, json.optString("strCaloricInfo"));
+            spCall.setString(14, json.optString("strAvailabilityArray"));
 
             // Execute update operation
             spCall.executeUpdate();

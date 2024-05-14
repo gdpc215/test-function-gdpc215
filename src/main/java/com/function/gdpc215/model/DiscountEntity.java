@@ -1,5 +1,6 @@
 package com.function.gdpc215.model;
 
+import java.io.Serializable;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,7 +11,7 @@ import org.json.JSONObject;
 
 import com.function.gdpc215.utils.JsonUtilities;
 
-public class DiscountEntity {
+public class DiscountEntity implements Serializable {
 
     public String id;
     public String businessId;

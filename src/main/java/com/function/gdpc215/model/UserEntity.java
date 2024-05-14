@@ -1,5 +1,6 @@
 package com.function.gdpc215.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,7 +10,7 @@ import org.json.JSONObject;
 
 import com.function.gdpc215.utils.JsonUtilities;
 
-public class UserEntity {
+public class UserEntity implements Serializable {
 
     public String id;
     public String strFirstName;
@@ -47,20 +48,20 @@ public class UserEntity {
     }
 
     public UserEntity(JSONObject jsonObject) {
-        this.id = jsonObject.getString("id");
-        this.strFirstName = jsonObject.getString("strFirstName");
-        this.strLastName = jsonObject.getString("strLastName");
-        this.strEmail = jsonObject.getString("strEmail");
-        this.strPassword = jsonObject.getString("strPassword");
-        this.strLoginByProvider = jsonObject.getString("strLoginByProvider");
-        this.dateBirth = JsonUtilities.getDateFromJsonString(jsonObject.getString("dateBirth"));
-        this.strGender = jsonObject.getString("strGender");
-        this.strPhone = jsonObject.getString("strPhone");
-        this.strLanguagePreferences = jsonObject.getString("strLanguagePreferences");
-        this.flgAllowNotifications = jsonObject.getBoolean("flgAllowNotifications");
-        this.flgActiveAccount = jsonObject.getBoolean("flgActiveAccount");
-        this.flgGhostUser = jsonObject.getBoolean("flgGhostUser");
-        this.dateLastLogin = jsonObject.isNull("dateLastLogin") ? null : new Date(jsonObject.getLong("dateLastLogin"));
+        this.id = jsonObject.optString("id");
+        this.strFirstName = jsonObject.optString("strFirstName");
+        this.strLastName = jsonObject.optString("strLastName");
+        this.strEmail = jsonObject.optString("strEmail");
+        this.strPassword = jsonObject.optString("strPassword");
+        this.strLoginByProvider = jsonObject.optString("strLoginByProvider");
+        this.dateBirth = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateBirth"));
+        this.strGender = jsonObject.optString("strGender");
+        this.strPhone = jsonObject.optString("strPhone");
+        this.strLanguagePreferences = jsonObject.optString("strLanguagePreferences");
+        this.flgAllowNotifications = jsonObject.optBoolean("flgAllowNotifications");
+        this.flgActiveAccount = jsonObject.optBoolean("flgActiveAccount");
+        this.flgGhostUser = jsonObject.optBoolean("flgGhostUser");
+        this.dateLastLogin = jsonObject.isNull("dateLastLogin") ? null : JsonUtilities.getDateFromJsonString(jsonObject.optString("dateLastLogin"));
         this.dateCreation = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateCreation"));
         this.dateModification = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateModification"));
     }

@@ -102,8 +102,8 @@ public class CouponClientRelation {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spCouponClientRelation_Insert(?, ?) }");
-            spCall.setString(1, json.getString("couponId"));
-            spCall.setString(2, json.getString("clientId"));
+            spCall.setString(1, json.optString("couponId"));
+            spCall.setString(2, json.optString("clientId"));
     
             // Execute insert operation
             spCall.executeUpdate();

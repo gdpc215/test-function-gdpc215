@@ -88,15 +88,15 @@ public class Business {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spBusiness_Create(?, ?, ?, ?, ?, ?, ?, ?, ?) }");
-            spCall.setString(1, json.getString("strSubDomain"));
-            spCall.setString(2, json.getString("strName"));
-            spCall.setString(3, json.getString("strDescription"));
-            spCall.setString(4, json.getString("strSocials"));
-            spCall.setString(5, json.getString("strWebPage"));
-            spCall.setString(6, json.getString("strSegment"));
-            spCall.setString(7, json.getString("strSpecialties"));
-            spCall.setString(8, json.getString("strAddress"));
-            spCall.setString(9, json.getString("strContact"));
+            spCall.setString(1, json.optString("strSubDomain"));
+            spCall.setString(2, json.optString("strName"));
+            spCall.setString(3, json.optString("strDescription"));
+            spCall.setString(4, json.optString("strSocials"));
+            spCall.setString(5, json.optString("strWebPage"));
+            spCall.setString(6, json.optString("strSegment"));
+            spCall.setString(7, json.optString("strSpecialties"));
+            spCall.setString(8, json.optString("strAddress"));
+            spCall.setString(9, json.optString("strContact"));
     
             // Execute insert operation
             spCall.executeUpdate();
@@ -118,15 +118,15 @@ public class Business {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spBusiness_Update(?, ?, ?, ?, ?, ?, ?, ?, ?) }");
-            spCall.setString(1, json.getString("id"));
-            spCall.setString(2, json.getString("strName"));
-            spCall.setString(3, json.getString("strDescription"));
-            spCall.setString(4, json.getString("strSocials"));
-            spCall.setString(5, json.getString("strWebPage"));
-            spCall.setString(6, json.getString("strSegment"));
-            spCall.setString(7, json.getString("strSpecialties"));
-            spCall.setString(8, json.getString("strAddress"));
-            spCall.setString(9, json.getString("strContact"));
+            spCall.setString(1, json.optString("id"));
+            spCall.setString(2, json.optString("strName"));
+            spCall.setString(3, json.optString("strDescription"));
+            spCall.setString(4, json.optString("strSocials"));
+            spCall.setString(5, json.optString("strWebPage"));
+            spCall.setString(6, json.optString("strSegment"));
+            spCall.setString(7, json.optString("strSpecialties"));
+            spCall.setString(8, json.optString("strAddress"));
+            spCall.setString(9, json.optString("strContact"));
             spCall.setInt(10, json.getInt("amtRating"));
     
             // Execute update operation
@@ -149,8 +149,8 @@ public class Business {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spBusiness_UpdateSubDomain(?, ?) }");
-            spCall.setString(1, json.getString("id"));
-            spCall.setString(2, json.getString("strSubDomain"));
+            spCall.setString(1, json.optString("id"));
+            spCall.setString(2, json.optString("strSubDomain"));
     
             // Execute update operation
             spCall.executeUpdate();

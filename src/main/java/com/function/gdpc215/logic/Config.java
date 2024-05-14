@@ -32,10 +32,10 @@ public class Config {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spConfig_Insert(?, ?, ?, ?) }");
-            spCall.setString(1, json.getString("id"));
-            spCall.setString(2, json.getString("businessId"));
-            spCall.setString(3, json.getString("strValue"));
-            spCall.setString(4, json.getString("strDescription"));
+            spCall.setString(1, json.optString("id"));
+            spCall.setString(2, json.optString("businessId"));
+            spCall.setString(3, json.optString("strValue"));
+            spCall.setString(4, json.optString("strDescription"));
     
             // Execute insert operation
             spCall.executeUpdate();
@@ -57,9 +57,9 @@ public class Config {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spConfig_Update(?, ?, ?) }");
-            spCall.setString(1, json.getString("id"));
-            spCall.setString(2, json.getString("strValue"));
-            spCall.setString(3, json.getString("strDescription"));
+            spCall.setString(1, json.optString("id"));
+            spCall.setString(2, json.optString("strValue"));
+            spCall.setString(3, json.optString("strDescription"));
     
             // Execute update operation
             spCall.executeUpdate();

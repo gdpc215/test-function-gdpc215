@@ -1,12 +1,13 @@
 package com.function.gdpc215.model.unused;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.json.JSONObject;
 
 import com.function.gdpc215.utils.JsonUtilities;
 
-public class DiscountProductRelationEntity {
+public class DiscountProductRelationEntity implements Serializable {
 
     public String discountId;
     public String productId;

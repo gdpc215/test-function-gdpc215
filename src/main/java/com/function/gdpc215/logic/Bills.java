@@ -85,14 +85,14 @@ public class Bills {
             // Parse JSON request body
             JSONObject json = new JSONObject(body.get());
             
-            String billId = json.getString("billId");
+            String billId = json.optString("billId");
             
             // Prepare statement and set parameters
             PreparedStatement spCall = connection.prepareCall("{ call spBills_UpdateBill(?, ?, ?, ?, ?, ?, ?) }");
             spCall.setString(1, billId);
             spCall.setInt(4, json.getInt("tableId"));
             spCall.setInt(5, json.getInt("billState"));
-            spCall.setString(6, json.getString("couponId"));
+            spCall.setString(6, json.optString("couponId"));
             spCall.setDouble(7, json.getDouble("amtTotalTab"));
             spCall.setDouble(8, json.getDouble("amtTip"));
             spCall.setDouble(9, json.getDouble("amtTotalChargeable"));
@@ -130,11 +130,11 @@ public class Bills {
             
             // Prepare statement and set parameters
             PreparedStatement spCall = connection.prepareCall("{ call spBills_InsertBill(?, ?, ?, ?, ?, ?, ?, ?) }");
-            spCall.setString(1, json.getString("businessId"));
-            spCall.setString(2, json.getString("userId"));
+            spCall.setString(1, json.optString("businessId"));
+            spCall.setString(2, json.optString("userId"));
             spCall.setInt(3, json.getInt("tableId"));
             spCall.setInt(4, json.getInt("billState"));
-            spCall.setString(5, json.getString("couponId"));
+            spCall.setString(5, json.optString("couponId"));
             spCall.setDouble(6, json.getDouble("amtTotalTab"));
             spCall.setDouble(7, json.getDouble("amtTip"));
             spCall.setDouble(8, json.getDouble("amtTotalChargeable"));
@@ -180,9 +180,9 @@ public class Bills {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spBills_InitBill(?, ?, ?) }");
-            spCall.setString(1, json.getString("businessId"));
+            spCall.setString(1, json.optString("businessId"));
             spCall.setInt(2, json.getInt("tableId"));
-            spCall.setString(3, json.getString("clientId"));
+            spCall.setString(3, json.optString("clientId"));
     
             // Execute operation
             ResultSet resultSet = spCall.executeQuery();
@@ -219,9 +219,9 @@ public class Bills {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spBills_ApplyCoupon(?, ?, ?) }");
-            spCall.setString(1, json.getString("businessId"));
-            spCall.setString(2, json.getString("id"));
-            spCall.setString(3, json.getString("couponCode"));
+            spCall.setString(1, json.optString("businessId"));
+            spCall.setString(2, json.optString("id"));
+            spCall.setString(3, json.optString("couponCode"));
     
             // Execute update operation
             spCall.executeUpdate();
@@ -243,8 +243,8 @@ public class Bills {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spBills_AddTip(?, ?) }");
-            spCall.setString(1, json.getString("id"));
-            spCall.setBigDecimal(2, new BigDecimal(json.getString("amtTip")));
+            spCall.setString(1, json.optString("id"));
+            spCall.setBigDecimal(2, new BigDecimal(json.optString("amtTip")));
     
             // Execute update operation
             spCall.executeUpdate();

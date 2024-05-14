@@ -61,8 +61,8 @@ public class DiscountProductRelation {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spDiscountProductRelation_Insert(?, ?) }");
-            spCall.setString(1, json.getString("discountId"));
-            spCall.setString(2, json.getString("productId"));
+            spCall.setString(1, json.optString("discountId"));
+            spCall.setString(2, json.optString("productId"));
     
             // Execute insert operation
             spCall.executeUpdate();
@@ -85,8 +85,8 @@ public class DiscountProductRelation {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spDiscountProductRelation_InsertProductArray(?, ?) }");
-            spCall.setString(1, json.getString("discountId"));
-            spCall.setString(2, json.getString("productIdArray"));
+            spCall.setString(1, json.optString("discountId"));
+            spCall.setString(2, json.optString("productIdArray"));
     
             // Execute insert operation
             spCall.executeUpdate();
@@ -109,8 +109,8 @@ public class DiscountProductRelation {
             
             // Prepare statement
             PreparedStatement spCall = connection.prepareCall("{ call spDiscountProductRelation_Delete(?, ?) }");
-            spCall.setString(1, json.getString("discountId"));
-            spCall.setString(2, json.getString("productId"));
+            spCall.setString(1, json.optString("discountId"));
+            spCall.setString(2, json.optString("productId"));
     
             // Execute the procedure
             spCall.executeUpdate();
@@ -133,7 +133,7 @@ public class DiscountProductRelation {
             
             // Prepare statement
             PreparedStatement spCall = connection.prepareCall("{ call spDiscountProductRelation_DeleteByDiscountId(?) }");
-            spCall.setString(1, json.getString("discountId"));
+            spCall.setString(1, json.optString("discountId"));
     
             // Execute the procedure
             spCall.executeUpdate();

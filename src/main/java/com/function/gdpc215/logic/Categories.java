@@ -71,9 +71,9 @@ public class Categories {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spCategories_Update(?, ?, ?) }");
-            spCall.setString(1, json.getString("id"));
-            spCall.setString(2, json.getString("strName"));
-            spCall.setString(3, json.getString("strDayAvailability"));
+            spCall.setString(1, json.optString("id"));
+            spCall.setString(2, json.optString("strName"));
+            spCall.setString(3, json.optString("strDayAvailability"));
     
             // Execute update operation
             spCall.executeUpdate();
@@ -95,9 +95,9 @@ public class Categories {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spCategories_Insert(?, ?, ?) }");
-            spCall.setString(1, json.getString("businessId"));
-            spCall.setString(2, json.getString("strName"));
-            spCall.setString(3, json.getString("strDayAvailability"));
+            spCall.setString(1, json.optString("businessId"));
+            spCall.setString(2, json.optString("strName"));
+            spCall.setString(3, json.optString("strDayAvailability"));
     
             // Execute insert operation
             spCall.executeUpdate();
@@ -119,9 +119,9 @@ public class Categories {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spCategories_ChangeOrderNumber(?, ?, ?) }");
-            spCall.setString(1, json.getString("businessId"));
-            spCall.setString(2, json.getString("categoryId"));
-            spCall.setString(3, json.getString("newOrderNumber"));
+            spCall.setString(1, json.optString("businessId"));
+            spCall.setString(2, json.optString("categoryId"));
+            spCall.setString(3, json.optString("newOrderNumber"));
     
             // Execute insert operation
             spCall.executeUpdate();

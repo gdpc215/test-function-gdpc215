@@ -106,8 +106,8 @@ public class Table {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spTable_Insert(?, ?) }");
-            spCall.setString(1, json.getString("businessId"));
-            spCall.setString(2, json.getString("tableNumber"));
+            spCall.setString(1, json.optString("businessId"));
+            spCall.setString(2, json.optString("tableNumber"));
     
             // Execute insert operation
             spCall.executeUpdate();
@@ -129,9 +129,9 @@ public class Table {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spTable_Update(?, ?, ?) }");
-            spCall.setString(1, json.getString("id"));
-            spCall.setString(2, json.getString("tableNumber"));
-            spCall.setBoolean(3, json.getBoolean("flgActive"));
+            spCall.setString(1, json.optString("id"));
+            spCall.setString(2, json.optString("tableNumber"));
+            spCall.setBoolean(3, json.optBoolean("flgActive"));
     
             // Execute update operation
             spCall.executeUpdate();
@@ -153,8 +153,8 @@ public class Table {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spTable_UpdateActiveUsers(?, ?, ?) }");
-            spCall.setString(1, json.getString("id"));
-            spCall.setBoolean(2, json.getBoolean("flgAction"));
+            spCall.setString(1, json.optString("id"));
+            spCall.setBoolean(2, json.optBoolean("flgAction"));
     
             // Execute update operation
             spCall.executeUpdate();

@@ -65,8 +65,8 @@ public class User {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spUser_LoginWithCredentials(?, ?) }");
-            spCall.setString(1, json.getString("strEmail"));
-            spCall.setString(2, json.getString("strPassword"));
+            spCall.setString(1, json.optString("strEmail"));
+            spCall.setString(2, json.optString("strPassword"));
     
             // Call procedure
             ResultSet resultSet = spCall.executeQuery();
@@ -91,8 +91,8 @@ public class User {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spUser_LoginFromSocials(?, ?) }");
-            spCall.setString(1, json.getString("strEmail"));
-            spCall.setString(2, json.getString("strLoginByProvider"));
+            spCall.setString(1, json.optString("strEmail"));
+            spCall.setString(2, json.optString("strLoginByProvider"));
     
             // Call procedure
             ResultSet resultSet = spCall.executeQuery();
@@ -131,10 +131,10 @@ public class User {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spUser_CreateFromSocials(?, ?, ?, ?) }");
-            spCall.setString(1, json.getString("strFirstName"));
-            spCall.setString(2, json.getString("strLastName"));
-            spCall.setString(3, json.getString("strEmail"));
-            spCall.setString(4, json.getString("strLoginByProvider"));
+            spCall.setString(1, json.optString("strFirstName"));
+            spCall.setString(2, json.optString("strLastName"));
+            spCall.setString(3, json.optString("strEmail"));
+            spCall.setString(4, json.optString("strLoginByProvider"));
     
             // Call procedure
             ResultSet resultSet = spCall.executeQuery();
@@ -159,17 +159,17 @@ public class User {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spUser_Update(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }");
-            spCall.setString(1, json.getString("id"));
-            spCall.setString(2, json.getString("strFirstName"));
-            spCall.setString(3, json.getString("strLastName"));
-            spCall.setString(4, json.getString("strEmail"));
-            spCall.setString(5, json.getString("strPassword"));
-            spCall.setString(6, json.getString("strLoginByProvider"));
-            spCall.setString(7, json.getString("dateBirth"));
-            spCall.setString(8, json.getString("strGender"));
-            spCall.setString(9, json.getString("strPhone"));
-            spCall.setString(10, json.getString("strLanguagePreferences"));
-            spCall.setString(11, json.getString("flgAllowNotifications"));
+            spCall.setString(1, json.optString("id"));
+            spCall.setString(2, json.optString("strFirstName"));
+            spCall.setString(3, json.optString("strLastName"));
+            spCall.setString(4, json.optString("strEmail"));
+            spCall.setString(5, json.optString("strPassword"));
+            spCall.setString(6, json.optString("strLoginByProvider"));
+            spCall.setString(7, json.optString("dateBirth"));
+            spCall.setString(8, json.optString("strGender"));
+            spCall.setString(9, json.optString("strPhone"));
+            spCall.setString(10, json.optString("strLanguagePreferences"));
+            spCall.setString(11, json.optString("flgAllowNotifications"));
     
             // Execute insert operation
             spCall.executeUpdate();

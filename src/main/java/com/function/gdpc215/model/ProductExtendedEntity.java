@@ -1,5 +1,6 @@
 package com.function.gdpc215.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,7 +11,7 @@ import org.json.JSONObject;
 
 import com.function.gdpc215.utils.LogUtils;
 
-public class ProductExtendedEntity {
+public class ProductExtendedEntity implements Serializable {
 
     public ProductEntity productEntity;
 
@@ -90,7 +91,7 @@ public class ProductExtendedEntity {
             this.strDispatchTypeDescription = jsonObject.optString("strDispatchTypeDescription");
             this.strFullImagePath = jsonObject.optString("strFullImagePath");
             this.strCategoryName = jsonObject.optString("strCategoryName");
-            this.intCategoryOrderNumber = jsonObject.getInt("intCategoryOrderNumber");
+            this.intCategoryOrderNumber = jsonObject.optInt("intCategoryOrderNumber");
             this.strCategoryDayAvailability = jsonObject.optString("strCategoryDayAvailability");
             this.flgHasDiscount = jsonObject.optBoolean("flgHasDiscount");
             this.flgCategoryValid = jsonObject.optBoolean("flgCategoryValid");

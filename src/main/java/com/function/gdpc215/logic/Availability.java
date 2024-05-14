@@ -72,15 +72,15 @@ public class Availability {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spAvailability_Insert(?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }");
-            spCall.setString(1, json.getString("business-id"));
-            spCall.setString(2, json.getString("strName"));
-            spCall.setString(3, json.getString("strDescription"));
-            spCall.setBoolean(4, json.getBoolean("flgShowDescription"));
-            spCall.setString(5, json.getString("strAvailableDays"));
-            spCall.setTime(6, Time.valueOf(json.getString("timeAvailabilityStart")));
-            spCall.setTime(7, Time.valueOf(json.getString("timeAvailabilityEnd")));
-            spCall.setDate(8, Date.valueOf(json.getString("dateValidityStart")));
-            spCall.setDate(9, Date.valueOf(json.getString("dateValidityEnd")));
+            spCall.setString(1, json.optString("business-id"));
+            spCall.setString(2, json.optString("strName"));
+            spCall.setString(3, json.optString("strDescription"));
+            spCall.setBoolean(4, json.optBoolean("flgShowDescription"));
+            spCall.setString(5, json.optString("strAvailableDays"));
+            spCall.setTime(6, Time.valueOf(json.optString("timeAvailabilityStart")));
+            spCall.setTime(7, Time.valueOf(json.optString("timeAvailabilityEnd")));
+            spCall.setDate(8, Date.valueOf(json.optString("dateValidityStart")));
+            spCall.setDate(9, Date.valueOf(json.optString("dateValidityEnd")));
     
             // Execute insert operation
             spCall.executeUpdate();
@@ -102,16 +102,16 @@ public class Availability {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spAvailability_Update(?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }");
-            spCall.setString(1, json.getString("id"));
-            spCall.setString(2, json.getString("strName"));
-            spCall.setString(3, json.getString("strDescription"));
-            spCall.setBoolean(4, json.getBoolean("flgShowDescription"));
-            spCall.setBoolean(5, json.getBoolean("flgActive"));
-            spCall.setString(6, json.getString("strAvailableDays"));
-            spCall.setTime(7, Time.valueOf(json.getString("timeAvailabilityStart")));
-            spCall.setTime(8, Time.valueOf(json.getString("timeAvailabilityEnd")));
-            spCall.setDate(9, Date.valueOf(json.getString("dateValidityStart")));
-            spCall.setDate(10, Date.valueOf(json.getString("dateValidityEnd")));
+            spCall.setString(1, json.optString("id"));
+            spCall.setString(2, json.optString("strName"));
+            spCall.setString(3, json.optString("strDescription"));
+            spCall.setBoolean(4, json.optBoolean("flgShowDescription"));
+            spCall.setBoolean(5, json.optBoolean("flgActive"));
+            spCall.setString(6, json.optString("strAvailableDays"));
+            spCall.setTime(7, Time.valueOf(json.optString("timeAvailabilityStart")));
+            spCall.setTime(8, Time.valueOf(json.optString("timeAvailabilityEnd")));
+            spCall.setDate(9, Date.valueOf(json.optString("dateValidityStart")));
+            spCall.setDate(10, Date.valueOf(json.optString("dateValidityEnd")));
     
             // Execute update operation
             spCall.executeUpdate();

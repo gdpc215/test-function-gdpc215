@@ -1,5 +1,6 @@
 package com.function.gdpc215.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,7 +10,7 @@ import org.json.JSONObject;
 
 import com.function.gdpc215.utils.JsonUtilities;
 
-public class TableEntity {
+public class TableEntity implements Serializable {
 
     public String id;
     public String businessId;
@@ -41,11 +42,11 @@ public class TableEntity {
     }
 
     public TableEntity(JSONObject jsonObject) {
-        this.id = jsonObject.getString("id");
-        this.businessId = jsonObject.getString("businessId");
-        this.tableNumber = jsonObject.getString("tableNumber");
-        this.flgActive = jsonObject.getBoolean("flgActive");
-        this.amtActiveSessions = jsonObject.getInt("amtActiveSessions");
+        this.id = jsonObject.optString("id");
+        this.businessId = jsonObject.optString("businessId");
+        this.tableNumber = jsonObject.optString("tableNumber");
+        this.flgActive = jsonObject.optBoolean("flgActive");
+        this.amtActiveSessions = jsonObject.optInt("amtActiveSessions");
         this.dateCreation = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateCreation"));
         this.dateModification = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateModification"));
     }

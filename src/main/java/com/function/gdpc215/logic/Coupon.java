@@ -90,14 +90,14 @@ public class Coupon {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spCoupon_Insert(?, ?, ?, ?, ?, ?, ?, ?) }");
-            spCall.setString(1, json.getString("businessId"));
-            spCall.setString(2, json.getString("strCode"));
-            spCall.setString(3, json.getString("strDescription"));
-            spCall.setString(4, json.getString("strDiscountType"));
-            spCall.setBigDecimal(5, new BigDecimal(json.getString("amtCouponValue")));
-            spCall.setDate(6, Date.valueOf(json.getString("dateExpiration")));
+            spCall.setString(1, json.optString("businessId"));
+            spCall.setString(2, json.optString("strCode"));
+            spCall.setString(3, json.optString("strDescription"));
+            spCall.setString(4, json.optString("strDiscountType"));
+            spCall.setBigDecimal(5, new BigDecimal(json.optString("amtCouponValue")));
+            spCall.setDate(6, Date.valueOf(json.optString("dateExpiration")));
             spCall.setInt(7, json.getInt("amtRedemptionLimit"));
-            spCall.setBoolean(8, json.getBoolean("flgSameClientReusage"));
+            spCall.setBoolean(8, json.optBoolean("flgSameClientReusage"));
     
             // Execute insert operation
             spCall.executeUpdate();
@@ -119,14 +119,14 @@ public class Coupon {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spCoupon_Update(?, ?, ?, ?, ?, ?, ?, ?) }");
-            spCall.setString(1, json.getString("id"));
-            spCall.setString(2, json.getString("strCode"));
-            spCall.setString(3, json.getString("strDescription"));
-            spCall.setString(4, json.getString("strDiscountType"));
-            spCall.setBigDecimal(5, new BigDecimal(json.getString("amtCouponValue")));
-            spCall.setDate(6, Date.valueOf(json.getString("dateExpiration")));
+            spCall.setString(1, json.optString("id"));
+            spCall.setString(2, json.optString("strCode"));
+            spCall.setString(3, json.optString("strDescription"));
+            spCall.setString(4, json.optString("strDiscountType"));
+            spCall.setBigDecimal(5, new BigDecimal(json.optString("amtCouponValue")));
+            spCall.setDate(6, Date.valueOf(json.optString("dateExpiration")));
             spCall.setInt(7, json.getInt("amtRedemptionLimit"));
-            spCall.setBoolean(8, json.getBoolean("flgSameClientReusage"));
+            spCall.setBoolean(8, json.optBoolean("flgSameClientReusage"));
     
             // Execute update operation
             spCall.executeUpdate();

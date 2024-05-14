@@ -73,17 +73,17 @@ public class Discount {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spDiscount_Insert(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }");
-            spCall.setString(1, json.getString("businessId"));
-            spCall.setString(2, json.getString("strName"));
-            spCall.setString(3, json.getString("strDescription"));
-            spCall.setBigDecimal(4, new BigDecimal(json.getString("amtDiscount")));
-            spCall.setString(5, json.getString("strDiscountType"));
-            spCall.setBoolean(6, json.getBoolean("flgActive"));
-            spCall.setString(7, json.getString("strAvailableDays"));
-            spCall.setTime(8, Time.valueOf(json.getString("timeAvailabilityStart")));
-            spCall.setTime(9, Time.valueOf(json.getString("timeAvailabilityEnd")));
-            spCall.setDate(10, Date.valueOf(json.getString("dateValidityStart")));
-            spCall.setDate(11, Date.valueOf(json.getString("dateValidityEnd")));
+            spCall.setString(1, json.optString("businessId"));
+            spCall.setString(2, json.optString("strName"));
+            spCall.setString(3, json.optString("strDescription"));
+            spCall.setBigDecimal(4, new BigDecimal(json.optString("amtDiscount")));
+            spCall.setString(5, json.optString("strDiscountType"));
+            spCall.setBoolean(6, json.optBoolean("flgActive"));
+            spCall.setString(7, json.optString("strAvailableDays"));
+            spCall.setTime(8, Time.valueOf(json.optString("timeAvailabilityStart")));
+            spCall.setTime(9, Time.valueOf(json.optString("timeAvailabilityEnd")));
+            spCall.setDate(10, Date.valueOf(json.optString("dateValidityStart")));
+            spCall.setDate(11, Date.valueOf(json.optString("dateValidityEnd")));
     
             // Execute insert operation
             spCall.executeUpdate();
@@ -105,18 +105,18 @@ public class Discount {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spDiscount_Update(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }");
-            spCall.setString(1, json.getString("id"));
-            spCall.setString(2, json.getString("businessId"));
-            spCall.setString(3, json.getString("strName"));
-            spCall.setString(4, json.getString("strDescription"));
-            spCall.setBigDecimal(5, new BigDecimal(json.getString("amtDiscount")));
-            spCall.setString(6, json.getString("strDiscountType"));
-            spCall.setBoolean(7, json.getBoolean("flgActive"));
-            spCall.setString(8, json.getString("strAvailableDays"));
-            spCall.setTime(9, Time.valueOf(json.getString("timeAvailabilityStart")));
-            spCall.setTime(10, Time.valueOf(json.getString("timeAvailabilityEnd")));
-            spCall.setDate(11, Date.valueOf(json.getString("dateValidityStart")));
-            spCall.setDate(12, Date.valueOf(json.getString("dateValidityEnd")));
+            spCall.setString(1, json.optString("id"));
+            spCall.setString(2, json.optString("businessId"));
+            spCall.setString(3, json.optString("strName"));
+            spCall.setString(4, json.optString("strDescription"));
+            spCall.setBigDecimal(5, new BigDecimal(json.optString("amtDiscount")));
+            spCall.setString(6, json.optString("strDiscountType"));
+            spCall.setBoolean(7, json.optBoolean("flgActive"));
+            spCall.setString(8, json.optString("strAvailableDays"));
+            spCall.setTime(9, Time.valueOf(json.optString("timeAvailabilityStart")));
+            spCall.setTime(10, Time.valueOf(json.optString("timeAvailabilityEnd")));
+            spCall.setDate(11, Date.valueOf(json.optString("dateValidityStart")));
+            spCall.setDate(12, Date.valueOf(json.optString("dateValidityEnd")));
     
             // Execute update operation
             spCall.executeUpdate();

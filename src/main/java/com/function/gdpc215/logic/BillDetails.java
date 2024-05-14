@@ -105,10 +105,10 @@ public class BillDetails {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spBillDetails_Insert(?, ?, ?, ?, ?) }");
-            spCall.setString(1, json.getString("billId"));
-            spCall.setString(2, json.getString("menuItemId"));
-            spCall.setBigDecimal(3, new BigDecimal(json.getString("amtListedPrice")));
-            spCall.setString(4, json.getString("strSpecialRequirements"));
+            spCall.setString(1, json.optString("billId"));
+            spCall.setString(2, json.optString("menuItemId"));
+            spCall.setBigDecimal(3, new BigDecimal(json.optString("amtListedPrice")));
+            spCall.setString(4, json.optString("strSpecialRequirements"));
             spCall.setInt(5, json.getInt("amtAmount"));
     
             // Execute insert operation
@@ -131,9 +131,9 @@ public class BillDetails {
             
             // Extract parameters from JSON and Prepare statement in a single line
             CallableStatement spCall = connection.prepareCall("{ call spBillDetails_Update(?, ?, ?, ?) }");
-            spCall.setString(1, json.getString("billDetailId"));
-            spCall.setBigDecimal(2, new BigDecimal(json.getString("amtListedPrice")));
-            spCall.setString(3, json.getString("strSpecialRequirements"));
+            spCall.setString(1, json.optString("billDetailId"));
+            spCall.setBigDecimal(2, new BigDecimal(json.optString("amtListedPrice")));
+            spCall.setString(3, json.optString("strSpecialRequirements"));
             spCall.setInt(4, json.getInt("amtAmount"));
     
             // Execute update operation

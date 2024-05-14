@@ -80,8 +80,8 @@ public class AvailabilityProductRelation {
         
                 // Prepare statement and execute insert operation
                 try (PreparedStatement spCall = connection.prepareCall("{ call spAvailabilityProductRelation_Insert(?, ?) }")) {
-                    spCall.setString(1, json.getString("availabilityId"));
-                    spCall.setString(2, json.getString("productId"));
+                    spCall.setString(1, json.optString("availabilityId"));
+                    spCall.setString(2, json.optString("productId"));
                     spCall.executeUpdate();
                 }
         
@@ -104,8 +104,8 @@ public class AvailabilityProductRelation {
                 
                 // Prepare statement and execute insert operation
                 try (PreparedStatement spCall = connection.prepareCall("{ call spAvailabilityProductRelation_InsertArray(?, ?) }")) {
-                    spCall.setString(1, json.getString("availabilityIdArray"));
-                    spCall.setString(2, json.getString("productId"));
+                    spCall.setString(1, json.optString("availabilityIdArray"));
+                    spCall.setString(2, json.optString("productId"));
                     spCall.executeUpdate();
                 }
         
