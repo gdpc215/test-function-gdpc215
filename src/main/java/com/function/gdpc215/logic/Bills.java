@@ -24,36 +24,18 @@ import com.microsoft.azure.functions.HttpStatus;
 
 public class Bills {
     public static Object hubBills (String subRoute, HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        if (subRoute.equals("get")) {
-            return fnBills_GetById(request, connectionString);
-        }
-        else if (subRoute.equals("get-by-bid")) {
-            return fnBills_GetByBusinessId(request, connectionString);
-        }
-        else if (subRoute.equals("update")) {
-            return fnBills_UpdateBill(request, connectionString);
-        }
-        else if (subRoute.equals("insert")) {
-            return fnBills_InsertBill(request, connectionString);
-        }
-        else if (subRoute.equals("init")) {
-            return fnBills_InitBill(request, connectionString);
-        } 
-        else if (subRoute.equals("calculate-tab")) {
-            return fnBills_CalculateTabAmount(request, connectionString);
-        } 
-        else if (subRoute.equals("apply-coupon")) {
-            return fnBills_ApplyCoupon(request, connectionString);
-        }
-        else if (subRoute.equals("add-tip")) {
-            return fnBills_AddTip(request, connectionString);
-        }
-        else if (subRoute.equals("close")) {
-            return fnBills_CloseBill(request, connectionString);
-        }
-        else {
-            return request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
-        }
+        return switch (subRoute) {
+            case "get" -> fnBills_GetById(request, connectionString);
+            case "get-by-bid" -> fnBills_GetByBusinessId(request, connectionString);
+            case "update" -> fnBills_UpdateBill(request, connectionString);
+            case "insert" -> fnBills_InsertBill(request, connectionString);
+            case "init" -> fnBills_InitBill(request, connectionString);
+            case "calculate-tab" -> fnBills_CalculateTabAmount(request, connectionString);
+            case "apply-coupon" -> fnBills_ApplyCoupon(request, connectionString);
+            case "add-tip" -> fnBills_AddTip(request, connectionString);
+            case "close" -> fnBills_CloseBill(request, connectionString);
+            default -> request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
+        };
     }
     
     private static Object fnBills_GetById(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {

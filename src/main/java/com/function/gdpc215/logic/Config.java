@@ -15,15 +15,11 @@ import com.microsoft.azure.functions.HttpStatus;
 public class Config {
     
     public static Object hubConfig(String subRoute, HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        if (subRoute.equals("insert")) {
-            return fnConfig_Insert(request, connectionString);
-        }
-        else if (subRoute.equals("update")) {
-            return fnConfig_Update(request, connectionString);
-        }
-        else {
-            return request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
-        }
+        return switch (subRoute) {
+            case "insert" -> fnConfig_Insert(request, connectionString);
+            case "update" -> fnConfig_Update(request, connectionString);
+            default -> request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
+        };
     }
 
     private static Object fnConfig_Insert(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {

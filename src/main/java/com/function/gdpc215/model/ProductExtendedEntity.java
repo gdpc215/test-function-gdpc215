@@ -3,22 +3,24 @@ package com.function.gdpc215.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.function.Consumer;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.function.gdpc215.utils.LogUtils;
 
 public class ProductExtendedEntity {
+
     public ProductEntity productEntity;
-    
+
     public double amtDiscountedPrice;
     public String strWeightDescription;
     public String strDispatchTypeDescription;
     public String strFullImagePath;
     public String strCategoryName;
     public int intCategoryOrderNumber;
+    public String strCategoryDayAvailability;
     public boolean flgHasDiscount;
     public boolean flgCategoryValid;
     public boolean flgIsAvailable;
@@ -36,14 +38,15 @@ public class ProductExtendedEntity {
         this.strFullImagePath = "";
         this.strCategoryName = "";
         this.intCategoryOrderNumber = 0;
+        this.strCategoryDayAvailability = "";
         this.flgHasDiscount = false;
         this.flgCategoryValid = false;
         this.flgIsAvailable = false;
         this.flgFinalValidation = false;
 
         this.strAvailabilityDetails = "";
-        this.listAvailabilityDetails = new ArrayList<AvailabilityEntity>();
-        
+        this.listAvailabilityDetails = new ArrayList<>();
+
     }
 
     // Constructor accepting all properties as parameters
@@ -52,12 +55,13 @@ public class ProductExtendedEntity {
             Double amtMinSaleWeight, String strMinSaleWeightMeasure, boolean flgHasStock, String strImagePath,
             String strAllergies, String strCaloricInfo, Date dateCreation, Date dateModification,
             double amtDiscountedPrice, String strWeightDescription, String strDispatchTypeDescription,
-            String strFullImagePath, String strCategoryName, int intCategoryOrderNumber, boolean flgHasDiscount,
-            boolean flgCategoryValid, boolean flgIsAvailable, boolean flgFinalValidation, String strAvailabilityDetails) {
-        
+            String strFullImagePath, String strCategoryName, int intCategoryOrderNumber, String strCategoryDayAvailability,
+            boolean flgHasDiscount, boolean flgCategoryValid, boolean flgIsAvailable, boolean flgFinalValidation,
+            String strAvailabilityDetails) {
+
         this.productEntity = new ProductEntity(
-            id, businessId, categoryId, strName, strDescription, amtPrice, amtPreparationTime, flgDispatchType, amtMinSaleWeight,
-            strMinSaleWeightMeasure, flgHasStock, strImagePath, strAllergies, strCaloricInfo, dateCreation, dateModification
+                id, businessId, categoryId, strName, strDescription, amtPrice, amtPreparationTime, flgDispatchType, amtMinSaleWeight,
+                strMinSaleWeightMeasure, flgHasStock, strImagePath, strAllergies, strCaloricInfo, dateCreation, dateModification
         );
 
         this.amtDiscountedPrice = amtDiscountedPrice;
@@ -66,6 +70,7 @@ public class ProductExtendedEntity {
         this.strFullImagePath = strFullImagePath;
         this.strCategoryName = strCategoryName;
         this.intCategoryOrderNumber = intCategoryOrderNumber;
+        this.strCategoryDayAvailability = strCategoryDayAvailability;
         this.flgHasDiscount = flgHasDiscount;
         this.flgCategoryValid = flgCategoryValid;
         this.flgIsAvailable = flgIsAvailable;
@@ -80,21 +85,21 @@ public class ProductExtendedEntity {
         try {
             this.productEntity = new ProductEntity(jsonObject);
 
-            this.amtDiscountedPrice = jsonObject.getDouble("amtDiscountedPrice");
-            this.strWeightDescription = jsonObject.getString("strWeightDescription");
-            this.strDispatchTypeDescription = jsonObject.getString("strDispatchTypeDescription");
-            this.strFullImagePath = jsonObject.getString("strFullImagePath");
-            this.strCategoryName = jsonObject.getString("strCategoryName");
+            this.amtDiscountedPrice = jsonObject.optDouble("amtDiscountedPrice");
+            this.strWeightDescription = jsonObject.optString("strWeightDescription");
+            this.strDispatchTypeDescription = jsonObject.optString("strDispatchTypeDescription");
+            this.strFullImagePath = jsonObject.optString("strFullImagePath");
+            this.strCategoryName = jsonObject.optString("strCategoryName");
             this.intCategoryOrderNumber = jsonObject.getInt("intCategoryOrderNumber");
-            this.flgHasDiscount = jsonObject.getBoolean("flgHasDiscount");
-            this.flgCategoryValid = jsonObject.getBoolean("flgCategoryValid");
-            this.flgIsAvailable = jsonObject.getBoolean("flgIsAvailable");
-            this.flgFinalValidation = jsonObject.getBoolean("flgFinalValidation");
-            
+            this.strCategoryDayAvailability = jsonObject.optString("strCategoryDayAvailability");
+            this.flgHasDiscount = jsonObject.optBoolean("flgHasDiscount");
+            this.flgCategoryValid = jsonObject.optBoolean("flgCategoryValid");
+            this.flgIsAvailable = jsonObject.optBoolean("flgIsAvailable");
+            this.flgFinalValidation = jsonObject.optBoolean("flgFinalValidation");
+
             this.strAvailabilityDetails = jsonObject.optString("strAvailabilityDetails");
             populateAvailabilityArray();
-            
-        } catch (Exception e) {
+        } catch (JSONException e) {
             LogUtils.ExceptionHandler(e);
         }
     }
@@ -102,7 +107,7 @@ public class ProductExtendedEntity {
     private void populateAvailabilityArray() {
         this.listAvailabilityDetails = new ArrayList<>();
         JSONArray jsonArrayAvailabilityDetails = new JSONArray(this.strAvailabilityDetails);
-        if (jsonArrayAvailabilityDetails != null) {
+        if (!jsonArrayAvailabilityDetails.isEmpty()) {
             for (int i = 0; i < jsonArrayAvailabilityDetails.length(); i++) {
                 JSONObject availabilityObj = jsonArrayAvailabilityDetails.optJSONObject(i);
                 if (availabilityObj != null) {
@@ -114,46 +119,37 @@ public class ProductExtendedEntity {
     }
 
     public static List<ProductExtendedEntity> getCollectionFromJsonArray(JSONArray array) {
-        List<ProductExtendedEntity> entities = new ArrayList<ProductExtendedEntity>();
-        array.forEach(
-            new Consumer<Object>() { 
-                @Override
-                public void accept(Object obj){ entities.add(new ProductExtendedEntity((JSONObject) obj)); } 
-            }
-        );
+        List<ProductExtendedEntity> entities = new ArrayList<>();
+        array.forEach((Object obj) -> {
+            entities.add(new ProductExtendedEntity((JSONObject) obj));
+        });
         return entities;
     }
-    
+
     public static List<ProductEntity> getBaseObjCollectionFromJsonArray(JSONArray array) {
-        List<ProductEntity> entities = new ArrayList<ProductEntity>();
-        array.forEach(
-            new Consumer<Object>() { 
-                @Override
-                public void accept(Object obj){ 
-                    ProductEntity ent = (new ProductExtendedEntity((JSONObject) obj)).productEntity;
-                    entities.add(ent); 
-                } 
-            }
-        );
+        List<ProductEntity> entities = new ArrayList<>();
+        array.forEach((Object obj) -> {
+            ProductEntity ent = (new ProductExtendedEntity((JSONObject) obj)).productEntity;
+            entities.add(ent);
+        });
         return entities;
     }
-    
+
     public static ProductExtendedEntity getSingleFromJsonArray(JSONArray array) {
         ProductExtendedEntity entity = null;
         List<ProductExtendedEntity> entities = getCollectionFromJsonArray(array);
-        if (entities.size() > 0) {
+        if (!entities.isEmpty()) {
             entity = entities.get(0);
         }
         return entity;
     }
-    
+
     public static ProductEntity getBaseObjSingleFromJsonArray(JSONArray array) {
         ProductEntity entity = null;
         List<ProductEntity> entities = getBaseObjCollectionFromJsonArray(array);
-        if (entities.size() > 0) {
+        if (!entities.isEmpty()) {
             entity = entities.get(0);
         }
         return entity;
     }
 }
-

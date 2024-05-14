@@ -22,34 +22,17 @@ import com.microsoft.azure.functions.HttpStatus;
 public class BillDetails {
     
     public static Object hubBillDetails (String subRoute, HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        
-        if (subRoute.equals("get")) {
-            return fnBillDetails_GetById(request, connectionString);
-        }
-        else if (subRoute.equals("get-extended")) {
-            return fnBillDetails_GetExtendedById(request, connectionString);
-        }
-        else if (subRoute.equals("get-by-bill")) {
-            return fnBillDetails_GetByBill(request, connectionString);
-        }
-        else if (subRoute.equals("get-extended-by-bill")) {
-            return fnBillDetails_GetExtendedByBill(request, connectionString);
-        }
-        else if (subRoute.equals("insert")) {
-            return fnBillDetails_Insert(request, connectionString);
-        }
-        else if (subRoute.equals("update")) {
-            return fnBillDetails_Update(request, connectionString);
-        }
-        else if (subRoute.equals("delete")) {
-            return fnBillDetails_Delete(request, connectionString);
-        }
-        else if (subRoute.equals("clear")) {
-            return fnBillDetails_Clear(request, connectionString);
-        } 
-        else {
-            return request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
-        }
+        return switch (subRoute) {
+            case "get" -> fnBillDetails_GetById(request, connectionString);
+            case "get-extended" -> fnBillDetails_GetExtendedById(request, connectionString);
+            case "get-by-bill" -> fnBillDetails_GetByBill(request, connectionString);
+            case "get-extended-by-bill" -> fnBillDetails_GetExtendedByBill(request, connectionString);
+            case "insert" -> fnBillDetails_Insert(request, connectionString);
+            case "update" -> fnBillDetails_Update(request, connectionString);
+            case "delete" -> fnBillDetails_Delete(request, connectionString);
+            case "clear" -> fnBillDetails_Clear(request, connectionString);
+            default -> request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
+        };
     }
 
     private static Object fnBillDetails_GetById(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {

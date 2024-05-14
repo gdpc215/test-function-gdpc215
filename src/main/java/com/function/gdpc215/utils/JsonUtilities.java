@@ -1,13 +1,18 @@
 package com.function.gdpc215.utils;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class JsonUtilities {
+
     public static JSONArray resultSetReader(ResultSet resultSet) {
         JSONArray jsonArray = new JSONArray();
         try {
@@ -15,9 +20,10 @@ public class JsonUtilities {
 
             while (resultSet.next()) {
                 JSONObject result = new JSONObject();
-                for (int i = 0; i < columns; i++)
+                for (int i = 0; i < columns; i++) {
                     result.put(resultSet.getMetaData().getColumnLabel(i + 1), resultSet.getObject(i + 1));
-                    jsonArray.put(result);
+                }
+                jsonArray.put(result);
             }
         } catch (SQLException e) {
             LogUtils.ExceptionHandler(e);
@@ -26,20 +32,45 @@ public class JsonUtilities {
     }
 
     public static Object[] jsonArrayToArray(JSONArray jsonArray) {
-        List<Object> list  = jsonArray.toList();
+        List<Object> list = jsonArray.toList();
         Object[] billArray = new Object[list.size()];
         return list.toArray(billArray);
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> List<T> jsonArrayToList(JSONArray jsonArray, Class<T> classType) {
-        List<T> resultList = new ArrayList<>();
-        
-        for (int i = 0; i < jsonArray.length(); i++) {
-            T object = (T) jsonArray.optJSONObject(i); // Assuming you have a method to convert JSONObject to T
-            resultList.add(object);
+		public static Date getDateFromJsonString(String value) {
+			return getDateFromJsonString(value, false);
+		}
+
+    public static Date getDateFromJsonString(String value, Boolean useSecondFormat) {
+        //public static String DATE_FORMAT = "MMMM d, yyyy, hh:mm:ss aa";
+        String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+				if (useSecondFormat) {
+					DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+				}
+
+        if (value == null || value.isEmpty() || value.equals("")) {
+            return null;
         }
-        
-        return resultList;
+        try {
+            return new Date((new SimpleDateFormat(DATE_FORMAT)).parse(value).getTime());
+        } catch (ParseException ex) {
+            LogUtils.ExceptionHandler(ex);
+            return null;
+        }
+    }
+
+    public static Time getTimeFromJsonString(String value) {
+        //public static String TIME_FORMAT = "hh:mm:ss aa";
+        String TIME_FORMAT = "HH:mm:ss";
+
+        if (value == null || value.isEmpty() || value.equals("")) {
+            return null;
+        }
+        try {
+            return new Time((new SimpleDateFormat(TIME_FORMAT)).parse(value).getTime());
+        } catch (ParseException ex) {
+            LogUtils.ExceptionHandler(ex);
+            return null;
+        }
     }
 }

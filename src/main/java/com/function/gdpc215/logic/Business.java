@@ -20,34 +20,22 @@ import com.microsoft.azure.functions.HttpStatus;
 public class Business {
     
     public static Object hubBusiness(String subRoute, HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        if (subRoute.equals("get")) {            
-            return fnBusiness_GetById(request, connectionString);
-        }
-        else if (subRoute.equals("get-by-subdomain")) {            
-            return fnBusiness_GetBySubdomain(request, connectionString);
-        }
-        else if (subRoute.equals("insert")) {
-            return fnBusiness_Insert(request, connectionString);
-        }
-        else if (subRoute.equals("update")) {
-            return fnBusiness_Update(request, connectionString);
-        }
-        else if (subRoute.equals("update-subdomain")) {
-            return fnBusiness_UpdateSubDomain(request, connectionString);
-        }
-        else if (subRoute.equals("deactivate")) {
-            return fnBusiness_Deactivate(request, connectionString);
-        }
-        else {
-            return request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
-        }
+        return switch (subRoute) {
+            case "get" -> fnBusiness_GetById(request, connectionString);
+            case "get-by-subdomain" -> fnBusiness_GetBySubdomain(request, connectionString);
+            case "insert" -> fnBusiness_Insert(request, connectionString);
+            case "update" -> fnBusiness_Update(request, connectionString);
+            case "update-subdomain" -> fnBusiness_UpdateSubDomain(request, connectionString);
+            case "deactivate" -> fnBusiness_Deactivate(request, connectionString);
+            default -> request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
+        };
     }
 
     private static Object fnBusiness_GetById(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
         Connection connection = DriverManager.getConnection(connectionString);
         String id = request.getQueryParameters().get("id");
 
-        if (id == "") {
+        if (id.equals("")) {
             return new Exception("ID can't be empty");
         }
         else if (!Utils.validateUUID(id)) {
@@ -64,7 +52,7 @@ public class Business {
             // Read result
             BusinessEntity entity = BusinessEntity.getSingleFromJsonArray(JsonUtilities.resultSetReader(resultSet));
             
-            return entity.id != "" ? entity : new Exception("Invalid subdomain");
+            return !entity.id.equals("") ? entity : new Exception("Invalid subdomain");
         }
     }
 
@@ -72,7 +60,7 @@ public class Business {
         Connection connection = DriverManager.getConnection(connectionString);
         String subdomain = request.getQueryParameters().get("subdomain");
         
-        if (subdomain == "") {
+        if ("".equals(subdomain)) {
             return new BusinessEntity();
         }
         else {
@@ -86,7 +74,7 @@ public class Business {
             // Read result
             BusinessEntity entity = BusinessEntity.getSingleFromJsonArray(JsonUtilities.resultSetReader(resultSet));
             
-            return entity.id != "" ? entity : new Exception("Subdominio invalido");
+            return !entity.id.equals("") ? entity : new Exception("Subdominio invalido");
         }
     }
 

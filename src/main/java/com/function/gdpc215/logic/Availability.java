@@ -21,24 +21,14 @@ import com.microsoft.azure.functions.HttpStatus;
 
 public class Availability {
     public static Object hubAvailability (String subRoute, HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        if (subRoute.equals("get")) {
-            return fnAvailability_GetById(request, connectionString);
-        }
-        else if (subRoute.equals("get-by-bid")) {
-            return fnAvailability_GetByBusinessId(request, connectionString);
-        }
-        else if (subRoute.equals("insert")) {
-            return fnAvailability_Insert(request, connectionString);
-        }
-        else if (subRoute.equals("update")) {
-            return fnAvailability_Update(request, connectionString);
-        }
-        else if (subRoute.equals("delete")) {
-            return fnAvailability_Delete(request, connectionString);
-        }
-        else {
-            return request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
-        }
+        return switch (subRoute) {
+            case "get" -> fnAvailability_GetById(request, connectionString);
+            case "get-by-bid" -> fnAvailability_GetByBusinessId(request, connectionString);
+            case "insert" -> fnAvailability_Insert(request, connectionString);
+            case "update" -> fnAvailability_Update(request, connectionString);
+            case "delete" -> fnAvailability_Delete(request, connectionString);
+            default -> request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
+        };
     }
 
     private static Object fnAvailability_GetById(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {

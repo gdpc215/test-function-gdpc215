@@ -1,18 +1,16 @@
 package com.function.gdpc215.model;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.function.Consumer;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.function.gdpc215.utils.LogUtils;
-import com.function.gdpc215.utils.Utils;
+import com.function.gdpc215.utils.JsonUtilities;
 
 public class BillEntity {
+
     public String billId;
     public String businessId;
     public String userId;
@@ -40,65 +38,57 @@ public class BillEntity {
         this.dateCreation = new Date();
         this.dateModification = new Date();
 
-        this.billDetails = new ArrayList<BillDetailExtendedEntity>();
+        this.billDetails = new ArrayList<>();
     }
 
     public BillEntity(JSONObject jsonObject) {
-        SimpleDateFormat sdfDate = new SimpleDateFormat(Utils.DATE_FORMAT);
 
-        try {
-            this.billId = jsonObject.optString("billId", "");
-            this.businessId = jsonObject.optString("businessId", "");
-            this.userId = jsonObject.optString("userId", "");
-            this.tableId = jsonObject.optInt("tableId", 0);
-            this.billState = jsonObject.optBoolean("billState", false);
-            this.couponId = jsonObject.optString("couponId", "");
-            this.amtTotalTab = jsonObject.optDouble("amtTotalTab", 0.0);
-            this.amtTip = jsonObject.optDouble("amtTip", 0.0);
-            this.amtTotalChargeable = jsonObject.optDouble("amtTotalChargeable", 0.0);
-            this.dateCreation = new Date(sdfDate.parse(jsonObject.optString("dateCreation", "1970-01-01")).getTime());
-            this.dateModification = new Date(sdfDate.parse(jsonObject.optString("dateModification", "1970-01-01")).getTime());
+        this.billId = jsonObject.optString("billId");
+        this.businessId = jsonObject.optString("businessId");
+        this.userId = jsonObject.optString("userId");
+        this.tableId = jsonObject.optInt("tableId", 0);
+        this.billState = jsonObject.optBoolean("billState");
+        this.couponId = jsonObject.optString("couponId");
+        this.amtTotalTab = jsonObject.optDouble("amtTotalTab");
+        this.amtTip = jsonObject.optDouble("amtTip");
+        this.amtTotalChargeable = jsonObject.optDouble("amtTotalChargeable");
+        this.dateCreation = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateCreation"));
+        this.dateModification = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateModification"));
 
-            this.billDetails = new ArrayList<BillDetailExtendedEntity>();
-        } catch (Exception e) {
-            LogUtils.ExceptionHandler(e);
-        }
+        this.billDetails = new ArrayList<>();
     }
 
     public BillEntity(
-        String billId, String businessId, String userId, int tableId, boolean billState, 
-        String couponId, double amtTotalTab, double amtTip, double amtTotalChargeable, 
-        Date dateCreation, Date dateModification) {
-            this.billId = billId;
-            this.businessId = businessId;
-            this.userId = userId;
-            this.tableId = tableId;
-            this.billState = billState;
-            this.couponId = couponId;
-            this.amtTotalTab = amtTotalTab;
-            this.amtTip = amtTip;
-            this.amtTotalChargeable = amtTotalChargeable;
-            this.dateCreation = dateCreation;
-            this.dateModification = dateModification;
+            String billId, String businessId, String userId, int tableId, boolean billState,
+            String couponId, double amtTotalTab, double amtTip, double amtTotalChargeable,
+            Date dateCreation, Date dateModification) {
+        this.billId = billId;
+        this.businessId = businessId;
+        this.userId = userId;
+        this.tableId = tableId;
+        this.billState = billState;
+        this.couponId = couponId;
+        this.amtTotalTab = amtTotalTab;
+        this.amtTip = amtTip;
+        this.amtTotalChargeable = amtTotalChargeable;
+        this.dateCreation = dateCreation;
+        this.dateModification = dateModification;
 
-            this.billDetails = new ArrayList<BillDetailExtendedEntity>();
+        this.billDetails = new ArrayList<>();
     }
-    
+
     public static List<BillEntity> getCollectionFromJsonArray(JSONArray array) {
-        List<BillEntity> entities = new ArrayList<BillEntity>();
-        array.forEach(
-            new Consumer<Object>() { 
-                @Override
-                public void accept(Object obj){ entities.add(new BillEntity((JSONObject) obj)); } 
-            }
-        );
+        List<BillEntity> entities = new ArrayList<>();
+        array.forEach((Object obj) -> {
+            entities.add(new BillEntity((JSONObject) obj));
+        });
         return entities;
     }
-    
+
     public static BillEntity getSingleFromJsonArray(JSONArray array) {
         BillEntity entity = null;
         List<BillEntity> entities = getCollectionFromJsonArray(array);
-        if (entities.size() > 0) {
+        if (!entities.isEmpty()) {
             entity = entities.get(0);
         }
         return entity;

@@ -20,27 +20,15 @@ import com.microsoft.azure.functions.HttpStatus;
 public class Categories {
     
     public static Object hubCategories(String subRoute, HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        if (subRoute.equals("get")) {
-            return fnCategories_GetById(request, connectionString);
-        }
-        else if (subRoute.equals("get-by-bid")) {
-            return fnCategories_GetByBusiness(request, connectionString);
-        } 
-        else if (subRoute.equals("insert")) {
-            return fnCategories_Insert(request, connectionString);
-        }
-        else if (subRoute.equals("update")) {
-            return fnCategories_Update(request, connectionString);
-        }
-        else if (subRoute.equals("change-order")) {
-            return fnCategories_ChangeOrderNumber(request, connectionString);
-        } 
-        else if (subRoute.equals("delete")) {
-            return fnCategories_Delete(request, connectionString);
-        }
-        else {
-            return request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
-        }
+        return switch (subRoute) {
+            case "get" -> fnCategories_GetById(request, connectionString);
+            case "get-by-bid" -> fnCategories_GetByBusiness(request, connectionString);
+            case "insert" -> fnCategories_Insert(request, connectionString);
+            case "update" -> fnCategories_Update(request, connectionString);
+            case "change-order" -> fnCategories_ChangeOrderNumber(request, connectionString);
+            case "delete" -> fnCategories_Delete(request, connectionString);
+            default -> request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
+        };
     }
     
     private static Object fnCategories_GetById(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {

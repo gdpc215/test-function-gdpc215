@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import com.function.gdpc215.model.UserEntity;
 import com.function.gdpc215.utils.JsonUtilities;
 import com.function.gdpc215.utils.SecurityUtils;
@@ -18,30 +19,16 @@ import com.microsoft.azure.functions.HttpStatus;
 
 public class User {
     public static Object hubUser (String subRoute, HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        if (subRoute.equals("get")) {
-            return fnUser_GetById(request, connectionString);
-        }
-        else if (subRoute.equals("login-with-credentials")) {
-            return fnUser_LoginWithCredentials(request, connectionString);
-        }
-        else if (subRoute.equals("login-from-socials")) {
-            return fnUser_LoginFromSocials(request, connectionString);
-        }
-        else if (subRoute.equals("create-ghost")) {
-            return fnUser_CreateGhost(request, connectionString);
-        }
-        else if (subRoute.equals("create-from-socials")) {
-            return fnUser_CreateFromSocials(request, connectionString);
-        } 
-        else if (subRoute.equals("update")) {
-            return fnUser_Update(request, connectionString);
-        } 
-        else if (subRoute.equals("deactivate")) {
-            return fnUser_Deactivate(request, connectionString);
-        }
-        else {
-            return request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
-        }
+        return switch (subRoute) {
+            case "get" -> fnUser_GetById(request, connectionString);
+            case "login-with-credentials" -> fnUser_LoginWithCredentials(request, connectionString);
+            case "login-from-socials" -> fnUser_LoginFromSocials(request, connectionString);
+            case "create-ghost" -> fnUser_CreateGhost(connectionString);
+            case "create-from-socials" -> fnUser_CreateFromSocials(request, connectionString);
+            case "update" -> fnUser_Update(request, connectionString);
+            case "deactivate" -> fnUser_Deactivate(request, connectionString);
+            default -> request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
+        };
     }
 
     private static Object fnUser_GetById(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
@@ -49,8 +36,8 @@ public class User {
         String id = request.getQueryParameters().get("id");
 
         if (!Utils.validateUUID(id)) { id = ""; }
-        if (id == "") {
-            return fnUser_CreateGhost(request, connectionString);
+        if (id.equals("")) {
+            return fnUser_CreateGhost(connectionString);
         }
         else {
             // Prepare statement
@@ -64,7 +51,7 @@ public class User {
             UserEntity entity = UserEntity.getSingleFromJsonArray(JsonUtilities.resultSetReader(resultSet));
             
             // Returns a ghost user if the id provided doesnt return a valid user 
-            return entity != null ? entity : fnUser_CreateGhost(request, connectionString);
+            return entity != null ? entity : fnUser_CreateGhost(connectionString);
         }
     }
 
@@ -120,7 +107,7 @@ public class User {
         }
     }
 
-    private static Object fnUser_CreateGhost(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
+    private static Object fnUser_CreateGhost(String connectionString) throws Exception {
         Connection connection = DriverManager.getConnection(connectionString);
         // Prepare statement
         PreparedStatement spCall = connection.prepareCall("{ call spUser_CreateGhost }");

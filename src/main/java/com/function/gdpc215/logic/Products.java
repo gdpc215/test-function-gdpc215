@@ -20,24 +20,14 @@ import com.microsoft.azure.functions.HttpStatus;
 public class Products {
 
     public static Object hubProducts (String subRoute, HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        if (subRoute.equals("get")) {
-            return fnProducts_Get(request, connectionString);
-        } 
-        else if (subRoute.equals("get-by-business")) {
-            return fnProducts_GetViewByBusiness(request, connectionString);
-        } 
-        else if (subRoute.equals("delete")) {
-            return fnProducts_Delete(request, connectionString);
-        }
-        else if (subRoute.equals("insert")) {
-            return fnProducts_Insert(request, connectionString);
-        }
-        else if (subRoute.equals("update")) {
-            return fnProducts_Update(request, connectionString);
-        }
-        else {
-            return request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
-        }
+        return switch (subRoute) {
+            case "get" -> fnProducts_Get(request, connectionString);
+            case "get-by-business" -> fnProducts_GetViewByBusiness(request, connectionString);
+            case "delete" -> fnProducts_Delete(request, connectionString);
+            case "insert" -> fnProducts_Insert(request, connectionString);
+            case "update" -> fnProducts_Update(request, connectionString);
+            default -> request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
+        };
     }
     
     private static Object fnProducts_Get(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {

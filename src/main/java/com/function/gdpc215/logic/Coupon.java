@@ -21,27 +21,15 @@ import com.microsoft.azure.functions.HttpStatus;
 public class Coupon {
     
     public static Object hubCoupon (String subRoute, HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        if (subRoute.equals("get")) {
-            return fnCoupon_Get(request, connectionString);
-        }
-        else if (subRoute.equals("validate-code")) {
-            return fnCoupon_Get_ValidateCode(request, connectionString);
-        }
-        else if (subRoute.equals("validate-code-for-client")) {
-            return fnCoupon_Get_ValidateCodeForClient(request, connectionString);
-        }
-        else if (subRoute.equals("insert")) {
-            return fnCoupon_Insert(request, connectionString);
-        }
-        else if (subRoute.equals("update")) {
-            return fnCoupon_Update(request, connectionString);
-        }
-        else if (subRoute.equals("delete")) {
-            return fnCoupon_Delete(request, connectionString);
-        }
-        else {
-            return request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
-        }
+        return switch (subRoute) {
+            case "get" -> fnCoupon_Get(request, connectionString);
+            case "validate-code" -> fnCoupon_Get_ValidateCode(request, connectionString);
+            case "validate-code-for-client" -> fnCoupon_Get_ValidateCodeForClient(request, connectionString);
+            case "insert" -> fnCoupon_Insert(request, connectionString);
+            case "update" -> fnCoupon_Update(request, connectionString);
+            case "delete" -> fnCoupon_Delete(request, connectionString);
+            default -> request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
+        };
     }
 
     private static Object fnCoupon_Get(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {

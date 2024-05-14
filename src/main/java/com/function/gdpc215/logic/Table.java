@@ -21,34 +21,22 @@ import com.microsoft.azure.functions.HttpStatus;
 public class Table {
     
     public static Object hubTable(String subRoute, HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        if (subRoute.equals("get")) {            
-            return fnTable_GetById(request, connectionString);
-        }
-        else if (subRoute.equals("get-by-bid")) {            
-            return fnTable_GetByBusiness(request, connectionString);
-        }
-        else if (subRoute.equals("validate-table")) {            
-            return fnTable_ValidateTable(request, connectionString);
-        }
-        else if (subRoute.equals("insert")) {
-            return fnTable_Insert(request, connectionString);
-        }
-        else if (subRoute.equals("update")) {
-            return fnTable_Update(request, connectionString);
-        }
-        else if (subRoute.equals("update-active-users")) {
-            return fnTable_UpdateActiveUsers(request, connectionString);
-        }
-        else {
-            return request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
-        }
+        return switch (subRoute) {
+            case "get" -> fnTable_GetById(request, connectionString);
+            case "get-by-bid" -> fnTable_GetByBusiness(request, connectionString);
+            case "validate-table" -> fnTable_ValidateTable(request, connectionString);
+            case "insert" -> fnTable_Insert(request, connectionString);
+            case "update" -> fnTable_Update(request, connectionString);
+            case "update-active-users" -> fnTable_UpdateActiveUsers(request, connectionString);
+            default -> request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
+        };
     }
 
     private static Object fnTable_GetById(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
         Connection connection = DriverManager.getConnection(connectionString);
         String id = request.getQueryParameters().get("id");
         
-        if (id == "") {
+        if (id.equals("")) {
             return new Exception("ID can't be empty");
         }
         else if (!Utils.validateUUID(id)) {
@@ -89,12 +77,12 @@ public class Table {
         String businessId = request.getQueryParameters().get("business-id");
         String tableNumber = request.getQueryParameters().get("table-number");
         
-        if (businessId == "" || tableNumber == "" ) {
+        if (businessId.equals("") || tableNumber.equals("") ) {
             return new Exception("Parameters can't be empty");
         }
         else {
             // Prepare statement
-            PreparedStatement spCall = connection.prepareCall("{ call spTable_ValidateTable(?) }");
+            PreparedStatement spCall = connection.prepareCall("{ call spTable_ValidateTable(?, ?) }");
             spCall.setString(1, businessId);
             spCall.setString(2, tableNumber);
     
@@ -104,7 +92,7 @@ public class Table {
             // Read result
             TableEntity entity = TableEntity.getSingleFromJsonArray(JsonUtilities.resultSetReader(resultSet));
     
-            return entity.id != "" ? entity : new Exception("Invalid table number");
+            return !entity.id.equals("") ? entity : new Exception("Invalid table number");
         }
     }
 

@@ -4,10 +4,6 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class Utils {
-    //public static String DATE_FORMAT = "MMMM d, yyyy, hh:mm:ss aa";
-    public static String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
-    //public static String TIME_FORMAT = "hh:mm:ss aa";
-    public static String TIME_FORMAT = "HH:mm:ss.SSS";
 
     public static boolean validateUUID (String uuid) {
         try {

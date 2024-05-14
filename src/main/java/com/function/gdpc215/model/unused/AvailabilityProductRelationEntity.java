@@ -1,14 +1,13 @@
 package com.function.gdpc215.model.unused;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.json.JSONObject;
 
-import com.function.gdpc215.utils.LogUtils;
-import com.function.gdpc215.utils.Utils;
+import com.function.gdpc215.utils.JsonUtilities;
 
 public class AvailabilityProductRelationEntity {
+
     public String availabilityId;
     public String productId;
     public Date dateCreation;
@@ -20,15 +19,9 @@ public class AvailabilityProductRelationEntity {
     }
 
     public AvailabilityProductRelationEntity(JSONObject jsonObject) {
-        SimpleDateFormat sdfDate = new SimpleDateFormat(Utils.DATE_FORMAT);
-
-        try {
-            this.availabilityId = jsonObject.optString("availabilityId", "");
-            this.productId = jsonObject.optString("productId", "");
-            this.dateCreation = new Date(sdfDate.parse(jsonObject.optString("dateCreation", "1970-01-01")).getTime());
-        } catch (Exception e) {
-            LogUtils.ExceptionHandler(e);
-        }
+        this.availabilityId = jsonObject.optString("availabilityId");
+        this.productId = jsonObject.optString("productId");
+        this.dateCreation = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateCreation"));
     }
 
     public AvailabilityProductRelationEntity(String availabilityId, String productId, Date dateCreation) {

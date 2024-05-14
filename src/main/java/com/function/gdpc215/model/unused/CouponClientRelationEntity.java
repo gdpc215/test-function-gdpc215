@@ -1,14 +1,13 @@
 package com.function.gdpc215.model.unused;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.json.JSONObject;
 
-import com.function.gdpc215.utils.LogUtils;
-import com.function.gdpc215.utils.Utils;
+import com.function.gdpc215.utils.JsonUtilities;
 
 public class CouponClientRelationEntity {
+
     public String couponId;
     public String clientId;
     public Date dateCreation;
@@ -20,15 +19,9 @@ public class CouponClientRelationEntity {
     }
 
     public CouponClientRelationEntity(JSONObject jsonObject) {
-        SimpleDateFormat sdfDate = new SimpleDateFormat(Utils.DATE_FORMAT);
-
-        try {
-            this.couponId = jsonObject.optString("couponId", "");
-            this.clientId = jsonObject.optString("clientId", "");
-            this.dateCreation = new Date(sdfDate.parse(jsonObject.optString("dateCreation", "1970-01-01")).getTime());
-        } catch (Exception e) {
-            LogUtils.ExceptionHandler(e);
-        }
+        this.couponId = jsonObject.optString("couponId");
+        this.clientId = jsonObject.optString("clientId");
+        this.dateCreation = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateCreation"));
     }
 
     public CouponClientRelationEntity(String couponId, String clientId, Date dateCreation) {

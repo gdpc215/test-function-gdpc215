@@ -23,24 +23,14 @@ import com.microsoft.azure.functions.HttpStatus;
 public class Discount {
     
     public static Object hubDiscount (String subRoute, HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        if (subRoute.equals("get")) {
-            return fnDiscount_Get(request, connectionString);
-        }
-        else if (subRoute.equals("get-by-bid")) {
-            return fnDiscount_GetByBusinessId(request, connectionString);
-        }
-        else if (subRoute.equals("insert")) {
-            return fnDiscount_Insert(request, connectionString);
-        }
-        else if (subRoute.equals("update")) {
-            return fnDiscount_Update(request, connectionString);
-        }
-        else if (subRoute.equals("delete")) {
-            return fnDiscount_Delete(request, connectionString);
-        }
-        else {
-            return request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
-        }
+        return switch (subRoute) {
+            case "get" -> fnDiscount_Get(request, connectionString);
+            case "get-by-bid" -> fnDiscount_GetByBusinessId(request, connectionString);
+            case "insert" -> fnDiscount_Insert(request, connectionString);
+            case "update" -> fnDiscount_Update(request, connectionString);
+            case "delete" -> fnDiscount_Delete(request, connectionString);
+            default -> request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
+        };
     }
     
     private static Object fnDiscount_Get(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {

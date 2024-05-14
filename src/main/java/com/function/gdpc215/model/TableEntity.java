@@ -1,18 +1,16 @@
 package com.function.gdpc215.model;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.function.Consumer;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.function.gdpc215.utils.LogUtils;
-import com.function.gdpc215.utils.Utils;
+import com.function.gdpc215.utils.JsonUtilities;
 
 public class TableEntity {
+
     public String id;
     public String businessId;
     public String tableNumber;
@@ -43,37 +41,29 @@ public class TableEntity {
     }
 
     public TableEntity(JSONObject jsonObject) {
-        SimpleDateFormat sdfDate = new SimpleDateFormat(Utils.DATE_FORMAT);
-        try {
-            this.id = jsonObject.getString("id");
-            this.businessId = jsonObject.getString("businessId");
-            this.tableNumber = jsonObject.getString("tableNumber");
-            this.flgActive = jsonObject.getBoolean("flgActive");
-            this.amtActiveSessions = jsonObject.getInt("amtActiveSessions");
-            this.dateCreation = sdfDate.parse(jsonObject.getString("dateCreation"));
-            this.dateModification = sdfDate.parse(jsonObject.getString("dateModification"));
-        } catch (Exception e) {
-            LogUtils.ExceptionHandler(e);
-        }
+        this.id = jsonObject.getString("id");
+        this.businessId = jsonObject.getString("businessId");
+        this.tableNumber = jsonObject.getString("tableNumber");
+        this.flgActive = jsonObject.getBoolean("flgActive");
+        this.amtActiveSessions = jsonObject.getInt("amtActiveSessions");
+        this.dateCreation = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateCreation"));
+        this.dateModification = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateModification"));
     }
-    
+
     public static List<TableEntity> getCollectionFromJsonArray(JSONArray array) {
-        List<TableEntity> entities = new ArrayList<TableEntity>();
+        List<TableEntity> entities = new ArrayList<>();
         if (array.length() > 0) {
-            array.forEach(
-                new Consumer<Object>() { 
-                    @Override
-                    public void accept(Object obj){ entities.add(new TableEntity((JSONObject) obj)); } 
-                }
-            );
+            array.forEach((Object obj) -> {
+                entities.add(new TableEntity((JSONObject) obj));
+            });
         }
         return entities;
     }
-    
+
     public static TableEntity getSingleFromJsonArray(JSONArray array) {
         TableEntity entity = null;
         List<TableEntity> entities = getCollectionFromJsonArray(array);
-        if (entities.size() > 0) {
+        if (!entities.isEmpty()) {
             entity = entities.get(0);
         }
         return entity;

@@ -3,7 +3,6 @@ package com.function.gdpc215.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.function.Consumer;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -35,12 +34,12 @@ public class BillDetailExtendedEntity{
         try {
             this.billDetailsEntity = new BillDetailEntity(jsonObject);
 
-            this.strName = jsonObject.optString("strName", "");
-            this.fullImgPath = jsonObject.optString("fullImgPath", "");
-            this.strDispatchTypeDescription = jsonObject.optString("strDispatchTypeDescription", "");
-            this.amtMinSaleWeight = jsonObject.optDouble("amtMinSaleWeight", 0.0);
-            this.strMinSaleWeightMeasure = jsonObject.optString("strMinSaleWeightMeasure", "");
-            this.strWeightDescription = jsonObject.optString("strWeightDescription", "");
+            this.strName = jsonObject.optString("strName");
+            this.fullImgPath = jsonObject.optString("fullImgPath");
+            this.strDispatchTypeDescription = jsonObject.optString("strDispatchTypeDescription");
+            this.amtMinSaleWeight = jsonObject.optDouble("amtMinSaleWeight");
+            this.strMinSaleWeightMeasure = jsonObject.optString("strMinSaleWeightMeasure");
+            this.strWeightDescription = jsonObject.optString("strWeightDescription");
 
         } catch (Exception e) {
             LogUtils.ExceptionHandler(e);
@@ -67,34 +66,26 @@ public class BillDetailExtendedEntity{
     }
     
     public static List<BillDetailExtendedEntity> getCollectionFromJsonArray(JSONArray array) {
-        List<BillDetailExtendedEntity> entities = new ArrayList<BillDetailExtendedEntity>();
-        array.forEach(
-            new Consumer<Object>() { 
-                @Override
-                public void accept(Object obj){ entities.add(new BillDetailExtendedEntity((JSONObject) obj)); } 
-            }
-        );
+        List<BillDetailExtendedEntity> entities = new ArrayList<>();
+        array.forEach((Object obj) -> {
+            entities.add(new BillDetailExtendedEntity((JSONObject) obj));
+        });
         return entities;
     }
     
     public static List<BillDetailEntity> getBaseObjCollectionFromJsonArray(JSONArray array) {
-        List<BillDetailEntity> entities = new ArrayList<BillDetailEntity>();
-        array.forEach(
-            new Consumer<Object>() { 
-                @Override
-                public void accept(Object obj){ 
-                    BillDetailEntity ent = (new BillDetailExtendedEntity((JSONObject) obj)).billDetailsEntity;
-                    entities.add(ent); 
-                } 
-            }
-        );
+        List<BillDetailEntity> entities = new ArrayList<>();
+        array.forEach((Object obj) -> {
+            BillDetailEntity ent = (new BillDetailExtendedEntity((JSONObject) obj)).billDetailsEntity;
+            entities.add(ent);
+        });
         return entities;
     }
     
     public static BillDetailExtendedEntity getSingleFromJsonArray(JSONArray array) {
         BillDetailExtendedEntity entity = null;
         List<BillDetailExtendedEntity> entities = getCollectionFromJsonArray(array);
-        if (entities.size() > 0) {
+        if (!entities.isEmpty()) {
             entity = entities.get(0);
         }
         return entity;
@@ -103,7 +94,7 @@ public class BillDetailExtendedEntity{
     public static BillDetailEntity getBaseObjSingleFromJsonArray(JSONArray array) {
         BillDetailEntity entity = null;
         List<BillDetailEntity> entities = getBaseObjCollectionFromJsonArray(array);
-        if (entities.size() > 0) {
+        if (!entities.isEmpty()) {
             entity = entities.get(0);
         }
         return entity;
