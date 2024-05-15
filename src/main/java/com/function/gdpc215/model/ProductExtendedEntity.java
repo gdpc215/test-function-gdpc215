@@ -86,7 +86,7 @@ public class ProductExtendedEntity implements Serializable {
         try {
             this.productEntity = new ProductEntity(jsonObject);
 
-            this.amtDiscountedPrice = jsonObject.optDouble("amtDiscountedPrice");
+            this.amtDiscountedPrice = jsonObject.optDouble("amtDiscountedPrice", 0.0);
             this.strWeightDescription = jsonObject.optString("strWeightDescription");
             this.strDispatchTypeDescription = jsonObject.optString("strDispatchTypeDescription");
             this.strFullImagePath = jsonObject.optString("strFullImagePath");

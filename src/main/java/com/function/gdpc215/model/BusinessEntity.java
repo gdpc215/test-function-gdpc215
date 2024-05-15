@@ -55,7 +55,7 @@ public class BusinessEntity implements Serializable {
         this.strSpecialties = jsonObject.optString("strSpecialties");
         this.strAddress = jsonObject.optString("strAddress");
         this.strContact = jsonObject.optString("strContact");
-        this.amtRating = jsonObject.optInt("amtRating", 0);
+        this.amtRating = jsonObject.optInt("amtRating");
         this.flgActive = jsonObject.optBoolean("flgActive");
         this.dateCreation = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateCreation"));
         this.dateModification = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateModification"));

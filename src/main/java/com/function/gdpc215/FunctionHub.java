@@ -29,20 +29,14 @@ import com.microsoft.azure.functions.annotation.HttpTrigger;
 public class FunctionHub {
     @FunctionName("HttpExample")
     public HttpResponseMessage run(
-        @HttpTrigger(
-                name = "req", 
-                methods = {HttpMethod.GET, HttpMethod.POST}, 
-                route="{route}/{subroute}", 
-                authLevel = AuthorizationLevel.ANONYMOUS
-            ) 
-            HttpRequestMessage<Optional<String>> request,
-        @BindingName("route") String originalRoute,
-        @BindingName("subroute") String originalSubroute,
-        final ExecutionContext context
-    ) {
+            @HttpTrigger(name = "req", methods = { HttpMethod.GET,
+                    HttpMethod.POST }, route = "{route}/{subroute}", authLevel = AuthorizationLevel.ANONYMOUS) HttpRequestMessage<Optional<String>> request,
+            @BindingName("route") String originalRoute,
+            @BindingName("subroute") String originalSubroute,
+            final ExecutionContext context) {
         context.getLogger().info("Java HTTP trigger processed a request.");
-        //String connectionString = System.getenv("KV-CONNECTION-STRING");
-				String connectionString = "jdbc:sqlserver://test-db-gdpc215.database.windows.net:1433;database=testdb;user=fastmenusg@test-db-gdpc215;password=gdpc215-5;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
+        // String connectionString = System.getenv("KV-CONNECTION-STRING");
+        String connectionString = "jdbc:sqlserver://test-db-gdpc215.database.windows.net:1433;database=testdb;user=fastmenusg@test-db-gdpc215;password=gdpc215-5;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
 
         String route = originalRoute.toLowerCase();
         String subroute = originalSubroute.toLowerCase();
@@ -70,18 +64,18 @@ public class FunctionHub {
 
             LogUtils.ExceptionHandler(e);
             return request
-                .createResponseBuilder(HttpStatus.BAD_REQUEST)
-                .body("Request body is invalid. Exception: " + e.getMessage())
-                .build();
+                    .createResponseBuilder(HttpStatus.BAD_REQUEST)
+                    .body("Request body is invalid. Exception: " + e.getMessage())
+                    .build();
         } catch (Exception e) {
             System.out.println("Path: " + request.getUri().getPath() + " || Error: " + e.getMessage());
 
             LogUtils.ExceptionHandler(e);
             return request
-                .createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(e.getMessage())
-                .build();
-        } 
+                    .createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage())
+                    .build();
+        }
 
         if (result instanceof HttpResponseMessage httpResponseMessage) {
             // Not found
@@ -89,24 +83,24 @@ public class FunctionHub {
 
             return httpResponseMessage;
         }
-        
+
         if (result == null) {
             System.out.println("Path: " + request.getUri().getPath() + " || Result: Success. No body response.");
 
             return request
-                .createResponseBuilder(HttpStatus.OK)
-                .body(new Object())
-                .build();
-        }
-        else {
-					// aca falla
+                    .createResponseBuilder(HttpStatus.OK)
+                    .body(new Object())
+                    .build();
+        } else {
             System.out.println("Path: " + request.getUri().getPath() + " || Result: " + result);
-						
-            return request
-                .createResponseBuilder(HttpStatus.OK)
-                .body(result)
-                .build();
+
+            HttpResponseMessage response = request
+                    .createResponseBuilder(HttpStatus.OK)
+                    .body(result)
+                    .build();
+
+            return response;
         }
-        
-    }    
+
+    }
 }

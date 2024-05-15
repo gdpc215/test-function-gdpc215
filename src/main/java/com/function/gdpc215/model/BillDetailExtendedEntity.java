@@ -38,7 +38,7 @@ public class BillDetailExtendedEntity implements Serializable {
             this.strName = jsonObject.optString("strName");
             this.fullImgPath = jsonObject.optString("fullImgPath");
             this.strDispatchTypeDescription = jsonObject.optString("strDispatchTypeDescription");
-            this.amtMinSaleWeight = jsonObject.optDouble("amtMinSaleWeight");
+            this.amtMinSaleWeight = jsonObject.optDouble("amtMinSaleWeight", 0.0);
             this.strMinSaleWeightMeasure = jsonObject.optString("strMinSaleWeightMeasure");
             this.strWeightDescription = jsonObject.optString("strWeightDescription");
 

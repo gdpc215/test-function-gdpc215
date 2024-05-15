@@ -36,9 +36,9 @@ public class BillDetailEntity implements Serializable {
         this.billDetailId = jsonObject.optString("billDetailId");
         this.billId = jsonObject.optString("billId");
         this.menuItemId = jsonObject.optString("menuItemId");
-        this.amtListedPrice = jsonObject.optDouble("amtListedPrice");
+        this.amtListedPrice = jsonObject.optDouble("amtListedPrice", 0.0);
         this.strSpecialRequirements = jsonObject.optString("strSpecialRequirements");
-        this.amtAmount = jsonObject.optDouble("amtAmount");
+        this.amtAmount = jsonObject.optDouble("amtAmount", 0.0);
         this.dateCreation = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateCreation"));
         this.dateModification = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateModification"));
 

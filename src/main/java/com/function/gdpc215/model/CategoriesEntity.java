@@ -35,7 +35,7 @@ public class CategoriesEntity implements Serializable {
         this.businessId = jsonObject.optString("businessId");
         this.strName = jsonObject.optString("strName");
         this.strDayAvailability = jsonObject.optString("strDayAvailability");
-        this.orderNumber = jsonObject.optInt("orderNumber", 0);
+        this.orderNumber = jsonObject.optInt("orderNumber");
         this.dateCreation = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateCreation"));
         this.dateModification = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateModification"));
     }

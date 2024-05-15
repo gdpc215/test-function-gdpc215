@@ -54,10 +54,10 @@ public class ProductEntity implements Serializable {
         this.categoryId = jsonObject.optString("categoryId");
         this.strName = jsonObject.optString("strName");
         this.strDescription = jsonObject.optString("strDescription");
-        this.amtPrice = jsonObject.optDouble("amtPrice");
+        this.amtPrice = jsonObject.optDouble("amtPrice", 0.0);
         this.amtPreparationTime = jsonObject.optInt("amtPreparationTime");
         this.flgDispatchType = jsonObject.optString("flgDispatchType");
-        this.amtMinSaleWeight = jsonObject.optDouble("amtMinSaleWeight");
+        this.amtMinSaleWeight = jsonObject.optDouble("amtMinSaleWeight", 0.0);
         this.strMinSaleWeightMeasure = jsonObject.optString("strMinSaleWeightMeasure");
         this.flgHasStock = jsonObject.optBoolean("flgHasStock");
         this.strImagePath = jsonObject.optString("strImagePath");

@@ -49,10 +49,10 @@ public class CouponEntity implements Serializable {
         this.strCode = jsonObject.optString("strCode");
         this.strDescription = jsonObject.optString("strDescription");
         this.strDiscountType = jsonObject.optString("strDiscountType");
-        this.amtCouponValue = jsonObject.optDouble("amtCouponValue");
+        this.amtCouponValue = jsonObject.optDouble("amtCouponValue", 0.0);
         this.dateExpiration = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateExpiration"));
-        this.amtRedemptionLimit = jsonObject.optInt("amtRedemptionLimit", 0);
-        this.amtRedemptionCount = jsonObject.optInt("amtRedemptionCount", 0);
+        this.amtRedemptionLimit = jsonObject.optInt("amtRedemptionLimit");
+        this.amtRedemptionCount = jsonObject.optInt("amtRedemptionCount");
         this.flgSameClientReusage = jsonObject.optBoolean("flgSameClientReusage");
         this.flgActive = jsonObject.optBoolean("flgActive");
         this.dateCreation = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateCreation"));

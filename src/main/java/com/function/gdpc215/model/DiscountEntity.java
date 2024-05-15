@@ -50,7 +50,7 @@ public class DiscountEntity implements Serializable {
         this.businessId = jsonObject.optString("businessId");
         this.strName = jsonObject.optString("strName");
         this.strDescription = jsonObject.optString("strDescription");
-        this.amtDiscount = jsonObject.optDouble("amtDiscount");
+        this.amtDiscount = jsonObject.optDouble("amtDiscount", 0.0);
         this.strDiscountType = jsonObject.optString("strDiscountType");
         this.flgActive = jsonObject.optBoolean("flgActive");
         this.strAvailableDays = jsonObject.optString("strAvailableDays");
