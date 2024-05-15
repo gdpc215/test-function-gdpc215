@@ -94,12 +94,11 @@ public class FunctionHub {
         } else {
             System.out.println("Path: " + request.getUri().getPath() + " || Result: " + result);
 
-            HttpResponseMessage response = request
+            return request
                     .createResponseBuilder(HttpStatus.OK)
                     .body(result)
                     .build();
 
-            return response;
         }
 
     }
