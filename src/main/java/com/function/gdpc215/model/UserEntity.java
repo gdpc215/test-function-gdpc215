@@ -1,8 +1,8 @@
 package com.function.gdpc215.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -17,17 +17,18 @@ public class UserEntity implements Serializable {
     public String strLastName;
     public String strEmail;
     public String strPassword;
+    public String strPasswordSalt;
     public String strLoginByProvider;
-    public Date dateBirth;
+    public LocalDateTime dateBirth;
     public String strGender;
     public String strPhone;
     public String strLanguagePreferences;
     public boolean flgAllowNotifications;
     public boolean flgActiveAccount;
     public boolean flgGhostUser;
-    public Date dateLastLogin;
-    public Date dateCreation;
-    public Date dateModification;
+    public LocalDateTime dateLastLogin;
+    public LocalDateTime dateCreation;
+    public LocalDateTime dateModification;
 
     public UserEntity() {
         this.id = "";
@@ -35,16 +36,20 @@ public class UserEntity implements Serializable {
         this.strLastName = "";
         this.strEmail = "";
         this.strLoginByProvider = "";
-        this.dateBirth = new Date(0);
+        this.dateBirth = LocalDateTime.MIN;
+        ;
         this.strGender = "";
         this.strPhone = "";
         this.strLanguagePreferences = "";
         this.flgAllowNotifications = false;
         this.flgActiveAccount = false;
         this.flgGhostUser = false;
-        this.dateLastLogin = new Date(0);
-        this.dateCreation = new Date(0);
-        this.dateModification = new Date(0);
+        this.dateLastLogin = LocalDateTime.MIN;
+        ;
+        this.dateCreation = LocalDateTime.MIN;
+        ;
+        this.dateModification = LocalDateTime.MIN;
+        ;
     }
 
     public UserEntity(JSONObject jsonObject) {
@@ -53,39 +58,19 @@ public class UserEntity implements Serializable {
         this.strLastName = jsonObject.optString("strLastName");
         this.strEmail = jsonObject.optString("strEmail");
         this.strPassword = jsonObject.optString("strPassword");
+        this.strPasswordSalt = jsonObject.optString("strPasswordSalt");
         this.strLoginByProvider = jsonObject.optString("strLoginByProvider");
-        this.dateBirth = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateBirth"));
+        this.dateBirth = JsonUtilities.getParsedLocalDateTime(jsonObject.optString("dateBirth"));
         this.strGender = jsonObject.optString("strGender");
         this.strPhone = jsonObject.optString("strPhone");
         this.strLanguagePreferences = jsonObject.optString("strLanguagePreferences");
         this.flgAllowNotifications = jsonObject.optBoolean("flgAllowNotifications");
         this.flgActiveAccount = jsonObject.optBoolean("flgActiveAccount");
         this.flgGhostUser = jsonObject.optBoolean("flgGhostUser");
-        this.dateLastLogin = jsonObject.isNull("dateLastLogin") ? null : JsonUtilities.getDateFromJsonString(jsonObject.optString("dateLastLogin"));
-        this.dateCreation = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateCreation"));
-        this.dateModification = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateModification"));
-    }
-
-    public UserEntity(String id, String strFirstName, String strLastName, String strEmail, String strPassword,
-            String strLoginByProvider, Date dateBirth, String strGender, String strPhone,
-            String strLanguagePreferences, boolean flgAllowNotifications, boolean flgActiveAccount,
-            boolean flgGhostUser, Date dateLastLogin, Date dateCreation, Date dateModification) {
-        this.id = id;
-        this.strFirstName = strFirstName;
-        this.strLastName = strLastName;
-        this.strEmail = strEmail;
-        this.strPassword = strPassword;
-        this.strLoginByProvider = strLoginByProvider;
-        this.dateBirth = dateBirth;
-        this.strGender = strGender;
-        this.strPhone = strPhone;
-        this.strLanguagePreferences = strLanguagePreferences;
-        this.flgAllowNotifications = flgAllowNotifications;
-        this.flgActiveAccount = flgActiveAccount;
-        this.flgGhostUser = flgGhostUser;
-        this.dateLastLogin = dateLastLogin;
-        this.dateCreation = dateCreation;
-        this.dateModification = dateModification;
+        this.dateLastLogin = jsonObject.isNull("dateLastLogin") ? null
+                : JsonUtilities.getParsedLocalDateTime(jsonObject.optString("dateLastLogin"));
+        this.dateCreation = JsonUtilities.getParsedLocalDateTime(jsonObject.optString("dateCreation"));
+        this.dateModification = JsonUtilities.getParsedLocalDateTime(jsonObject.optString("dateModification"));
     }
 
     public static List<UserEntity> getCollectionFromJsonArray(JSONArray array) {

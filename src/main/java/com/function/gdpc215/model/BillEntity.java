@@ -1,8 +1,8 @@
 package com.function.gdpc215.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -15,14 +15,14 @@ public class BillEntity implements Serializable {
     public String billId;
     public String businessId;
     public String userId;
-    public int tableId;
+    public String tableId;
     public boolean billState;
     public String couponId;
     public double amtTotalTab;
     public double amtTip;
     public double amtTotalChargeable;
-    public Date dateCreation;
-    public Date dateModification;
+    public LocalDateTime dateCreation;
+    public LocalDateTime dateModification;
 
     public List<BillDetailExtendedEntity> billDetails;
 
@@ -30,14 +30,14 @@ public class BillEntity implements Serializable {
         this.billId = "";
         this.businessId = "";
         this.userId = "";
-        this.tableId = 0;
+        this.tableId = "";
         this.billState = false;
         this.couponId = "";
         this.amtTotalTab = 0.0;
         this.amtTip = 0.0;
         this.amtTotalChargeable = 0.0;
-        this.dateCreation = new Date();
-        this.dateModification = new Date();
+        this.dateCreation = LocalDateTime.MIN;
+        this.dateModification = LocalDateTime.MIN;
 
         this.billDetails = new ArrayList<>();
     }
@@ -47,33 +47,14 @@ public class BillEntity implements Serializable {
         this.billId = jsonObject.optString("billId");
         this.businessId = jsonObject.optString("businessId");
         this.userId = jsonObject.optString("userId");
-        this.tableId = jsonObject.optInt("tableId");
+        this.tableId = jsonObject.optString("tableId");
         this.billState = jsonObject.optBoolean("billState");
         this.couponId = jsonObject.optString("couponId");
         this.amtTotalTab = jsonObject.optDouble("amtTotalTab", 0.0);
         this.amtTip = jsonObject.optDouble("amtTip", 0.0);
         this.amtTotalChargeable = jsonObject.optDouble("amtTotalChargeable", 0.0);
-        this.dateCreation = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateCreation"));
-        this.dateModification = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateModification"));
-
-        this.billDetails = new ArrayList<>();
-    }
-
-    public BillEntity(
-            String billId, String businessId, String userId, int tableId, boolean billState,
-            String couponId, double amtTotalTab, double amtTip, double amtTotalChargeable,
-            Date dateCreation, Date dateModification) {
-        this.billId = billId;
-        this.businessId = businessId;
-        this.userId = userId;
-        this.tableId = tableId;
-        this.billState = billState;
-        this.couponId = couponId;
-        this.amtTotalTab = amtTotalTab;
-        this.amtTip = amtTip;
-        this.amtTotalChargeable = amtTotalChargeable;
-        this.dateCreation = dateCreation;
-        this.dateModification = dateModification;
+        this.dateCreation = JsonUtilities.getParsedLocalDateTime(jsonObject.optString("dateCreation"));
+        this.dateModification = JsonUtilities.getParsedLocalDateTime(jsonObject.optString("dateModification"));
 
         this.billDetails = new ArrayList<>();
     }

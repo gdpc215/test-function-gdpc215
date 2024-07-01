@@ -1,7 +1,10 @@
 package com.function.gdpc215.utils;
 
+import java.sql.Date;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 public class Utils {
 
@@ -10,11 +13,15 @@ public class Utils {
             // First validation: UUID accepts it
             UUID value = UUID.fromString(uuid);
             // Second validation: Matches pattern
-            Pattern UUID_REGEX = Pattern.compile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
-            return UUID_REGEX.matcher(value.toString()).matches();
+            return Constants.UUID_REGEX.matcher(value.toString()).matches();
         }
         catch (Exception e) {
             return false;
         }
+    }
+
+    public static Date dateConverterToSql(LocalDateTime dateValue) {
+        Instant instant = dateValue.toInstant(ZoneOffset.UTC);
+        return new Date(instant.toEpochMilli());
     }
 }

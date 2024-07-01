@@ -2,7 +2,6 @@ package com.function.gdpc215.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -45,25 +44,6 @@ public class BillDetailExtendedEntity implements Serializable {
         } catch (Exception e) {
             LogUtils.ExceptionHandler(e);
         }
-    }
-
-    public BillDetailExtendedEntity(
-        String billDetailId, String billId, String menuItemId, double amtListedPrice,
-        String strSpecialRequirements, double amtAmount, Date dateCreation, Date dateModification,
-        String strName, String fullImgPath, String strDispatchTypeDescription,
-        double amtMinSaleWeight, String strMinSaleWeightMeasure, String strWeightDescription) {
-
-            this.billDetailsEntity = new BillDetailEntity(
-                billDetailId, billId, menuItemId, amtListedPrice, strSpecialRequirements, 
-                amtAmount, dateCreation, dateModification);
-
-            this.strName = strName;
-            this.fullImgPath = fullImgPath;
-            this.strDispatchTypeDescription = strDispatchTypeDescription;
-            this.amtMinSaleWeight = amtMinSaleWeight;
-            this.strMinSaleWeightMeasure = strMinSaleWeightMeasure;
-            this.strWeightDescription = strWeightDescription;
-
     }
     
     public static List<BillDetailExtendedEntity> getCollectionFromJsonArray(JSONArray array) {

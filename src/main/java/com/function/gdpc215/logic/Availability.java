@@ -1,26 +1,20 @@
 package com.function.gdpc215.logic;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Time;
 import java.util.List;
 import java.util.Optional;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.function.gdpc215.database.AvailabilityDB;
 import com.function.gdpc215.model.AvailabilityEntity;
-import com.function.gdpc215.utils.JsonUtilities;
 import com.function.gdpc215.utils.SecurityUtils;
 import com.microsoft.azure.functions.HttpRequestMessage;
 import com.microsoft.azure.functions.HttpStatus;
 
 public class Availability {
-    public static Object hubAvailability (String subRoute, HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
+    public static Object hubAvailability(String subRoute, HttpRequestMessage<Optional<String>> request,
+            String connectionString) throws Exception {
         return switch (subRoute) {
             case "get" -> fnAvailability_GetById(request, connectionString);
             case "get-by-bid" -> fnAvailability_GetByBusinessId(request, connectionString);
@@ -31,107 +25,57 @@ public class Availability {
         };
     }
 
-    private static Object fnAvailability_GetById(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
-        String availabilityId = request.getQueryParameters().get("id"); 
+    private static Object fnAvailability_GetById(HttpRequestMessage<Optional<String>> request, String connectionString)
+            throws Exception {
+        String availabilityId = request.getQueryParameters().get("id");
 
-        // Prepare statement for availability
-        PreparedStatement spCall = connection.prepareCall("{ call spAvailability_Get(?) }");
-        spCall.setString(1, availabilityId);
-        // Call procedure
-        ResultSet resultSet = spCall.executeQuery();
-
-        // Cast result to appropiate type
-        AvailabilityEntity entity = AvailabilityEntity.getSingleFromJsonArray(JsonUtilities.resultSetReader(resultSet));
-
+        AvailabilityEntity entity = AvailabilityDB.fnAvailability_GetById(connectionString, availabilityId);
         return entity;
     }
 
-    private static Object fnAvailability_GetByBusinessId(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
-        // Prepare statement
-        PreparedStatement spCall = connection.prepareCall("{ call spAvailability_GetByBusinessId(?) }");
-        spCall.setString(1, request.getQueryParameters().get("business-id"));
+    private static Object fnAvailability_GetByBusinessId(HttpRequestMessage<Optional<String>> request,
+            String connectionString) throws Exception {
+        String businessId = request.getQueryParameters().get("business-id");
 
-        // Call procedure
-        ResultSet resultSet = spCall.executeQuery();
-        
-        // Cast result to appropiate type
-        List<AvailabilityEntity> entity = AvailabilityEntity.getCollectionFromJsonArray(JsonUtilities.resultSetReader(resultSet));
-        
+        List<AvailabilityEntity> entity = AvailabilityDB.fnAvailability_GetByBusinessId(connectionString, businessId);
         return entity;
     }
 
-    private static Object fnAvailability_Insert(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
+    private static Object fnAvailability_Insert(HttpRequestMessage<Optional<String>> request, String connectionString)
+            throws Exception {
         // Read request body
         Optional<String> body = request.getBody();
         if (SecurityUtils.isValidRequestBody(body)) {
             // Parse JSON request body
-            JSONObject json = new JSONObject(body.get());
-            
-            // Extract parameters from JSON and Prepare statement in a single line
-            CallableStatement spCall = connection.prepareCall("{ call spAvailability_Insert(?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }");
-            spCall.setString(1, json.optString("business-id"));
-            spCall.setString(2, json.optString("strName"));
-            spCall.setString(3, json.optString("strDescription"));
-            spCall.setBoolean(4, json.optBoolean("flgShowDescription"));
-            spCall.setString(5, json.optString("strAvailableDays"));
-            spCall.setTime(6, Time.valueOf(json.optString("timeAvailabilityStart")));
-            spCall.setTime(7, Time.valueOf(json.optString("timeAvailabilityEnd")));
-            spCall.setDate(8, Date.valueOf(json.optString("dateValidityStart")));
-            spCall.setDate(9, Date.valueOf(json.optString("dateValidityEnd")));
-    
-            // Execute insert operation
-            spCall.executeUpdate();
-
+            JSONObject jsonBody = new JSONObject(body.get());
+            AvailabilityEntity availEntity = new AvailabilityEntity(jsonBody);
+            AvailabilityDB.fnAvailability_Insert(connectionString, availEntity);
             return null;
-        }
-        else {
+        } else {
             throw new JSONException("Error al leer el cuerpo de la peticion");
         }
     }
 
-    private static Object fnAvailability_Update(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
+    private static Object fnAvailability_Update(HttpRequestMessage<Optional<String>> request, String connectionString)
+            throws Exception {
         // Read request body
         Optional<String> body = request.getBody();
         if (SecurityUtils.isValidRequestBody(body)) {
             // Parse JSON request body
-            JSONObject json = new JSONObject(body.get());
-            
-            // Extract parameters from JSON and Prepare statement in a single line
-            CallableStatement spCall = connection.prepareCall("{ call spAvailability_Update(?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }");
-            spCall.setString(1, json.optString("id"));
-            spCall.setString(2, json.optString("strName"));
-            spCall.setString(3, json.optString("strDescription"));
-            spCall.setBoolean(4, json.optBoolean("flgShowDescription"));
-            spCall.setBoolean(5, json.optBoolean("flgActive"));
-            spCall.setString(6, json.optString("strAvailableDays"));
-            spCall.setTime(7, Time.valueOf(json.optString("timeAvailabilityStart")));
-            spCall.setTime(8, Time.valueOf(json.optString("timeAvailabilityEnd")));
-            spCall.setDate(9, Date.valueOf(json.optString("dateValidityStart")));
-            spCall.setDate(10, Date.valueOf(json.optString("dateValidityEnd")));
-    
-            // Execute update operation
-            spCall.executeUpdate();
-
+            JSONObject jsonBody = new JSONObject(body.get());
+            AvailabilityEntity availEntity = new AvailabilityEntity(jsonBody);
+            AvailabilityDB.fnAvailability_Insert(connectionString, availEntity);
             return null;
-        }
-        else {
+        } else {
             throw new JSONException("Error al leer el cuerpo de la peticion");
         }
     }
 
-    private static Object fnAvailability_Delete(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
-        // Prepare statement
-        PreparedStatement spCall = connection.prepareCall("{ call spAvailability_Delete(?) }");
-        spCall.setString(1, request.getQueryParameters().get("id"));
+    private static Object fnAvailability_Delete(HttpRequestMessage<Optional<String>> request, String connectionString)
+            throws Exception {
+        String availabilityId = request.getQueryParameters().get("id");
 
-        // Call procedure
-        spCall.executeUpdate();
-
+        AvailabilityDB.fnAvailability_Delete(connectionString, availabilityId);
         return null;
     }
 

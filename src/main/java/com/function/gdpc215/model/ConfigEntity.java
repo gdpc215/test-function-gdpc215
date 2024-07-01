@@ -1,8 +1,8 @@
 package com.function.gdpc215.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -17,8 +17,8 @@ public class ConfigEntity implements Serializable {
     public String strValue;
     public String strDescription;
     public boolean flgActive;
-    public Date dateCreation;
-    public Date dateModification;
+    public LocalDateTime dateCreation;
+    public LocalDateTime dateModification;
 
     public ConfigEntity() {
         this.id = "";
@@ -26,8 +26,8 @@ public class ConfigEntity implements Serializable {
         this.strValue = "";
         this.strDescription = "";
         this.flgActive = false;
-        this.dateCreation = new Date();
-        this.dateModification = new Date();
+        this.dateCreation = LocalDateTime.MIN;
+        this.dateModification = LocalDateTime.MIN;
     }
 
     public ConfigEntity(JSONObject jsonObject) {
@@ -36,18 +36,8 @@ public class ConfigEntity implements Serializable {
         this.strValue = jsonObject.optString("strValue");
         this.strDescription = jsonObject.optString("strDescription");
         this.flgActive = jsonObject.optBoolean("flgActive");
-        this.dateCreation = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateCreation"));
-        this.dateModification = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateModification"));
-    }
-
-    public ConfigEntity(String id, String businessId, String strValue, String strDescription, boolean flgActive, Date dateCreation, Date dateModification) {
-        this.id = id;
-        this.businessId = businessId;
-        this.strValue = strValue;
-        this.strDescription = strDescription;
-        this.flgActive = flgActive;
-        this.dateCreation = dateCreation;
-        this.dateModification = dateModification;
+        this.dateCreation = JsonUtilities.getParsedLocalDateTime(jsonObject.optString("dateCreation"));
+        this.dateModification = JsonUtilities.getParsedLocalDateTime(jsonObject.optString("dateModification"));
     }
 
     public static List<ConfigEntity> getCollectionFromJsonArray(JSONArray array) {

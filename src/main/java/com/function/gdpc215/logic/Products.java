@@ -36,7 +36,7 @@ public class Products {
         PreparedStatement spCall = connection.prepareCall("{ call spMenuProducts_Get(?) }");
         spCall.setString(1, request.getQueryParameters().get("id"));
 
-        // Call procedure
+        // Execute operation
         ResultSet resultSet = spCall.executeQuery();
 
         // Cast result to appropiate type
@@ -51,10 +51,10 @@ public class Products {
         PreparedStatement spCall = connection.prepareCall("{ call spMenuProducts_GetByBusiness(?) }");
         spCall.setString(1, request.getQueryParameters().get("business-id"));
 
-        // Call procedure
+        // Execute operation
         ResultSet resultSet = spCall.executeQuery();
 
-        // Cast to appropiate type
+        // Cast result to appropiate type
         List<ProductExtendedEntity> entity = ProductExtendedEntity.getCollectionFromJsonArray(JsonUtilities.resultSetReader(resultSet));
 
         return entity;
@@ -75,10 +75,10 @@ public class Products {
             spCall.setString(2, json.optString("categoryId"));
             spCall.setString(3, json.optString("strName"));
             spCall.setString(4, json.optString("strDescription"));
-            spCall.setDouble(5, json.getDouble("amtPrice"));
-            spCall.setInt(6, json.getInt("amtPreparationTime"));
+            spCall.setDouble(5, json.optDouble("amtPrice"));
+            spCall.setInt(6, json.optInt("amtPreparationTime"));
             spCall.setString(7, json.optString("flgDispatchType"));
-            spCall.setDouble(8, json.getDouble("amtMinSaleWeight"));
+            spCall.setDouble(8, json.optDouble("amtMinSaleWeight"));
             spCall.setString(9, json.optString("strMinSaleWeightMeasure"));
             spCall.setBoolean(10, json.optBoolean("flgHasStock"));
             spCall.setString(11, json.optString("strImagePath"));
@@ -86,7 +86,7 @@ public class Products {
             spCall.setString(13, json.optString("strCaloricInfo"));
             spCall.setString(14, json.optString("strAvailabilityArray"));
     
-            // Execute insert operation
+            // Execute operation
             spCall.executeUpdate();
 
             return null;
@@ -121,7 +121,7 @@ public class Products {
             spCall.setString(13, json.optString("strCaloricInfo"));
             spCall.setString(14, json.optString("strAvailabilityArray"));
 
-            // Execute update operation
+            // Execute operation
             spCall.executeUpdate();
 
             return null;

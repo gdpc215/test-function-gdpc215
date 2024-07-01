@@ -5,11 +5,17 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import com.function.gdpc215.utils.adapters.LocalDateAdapter;
+import com.function.gdpc215.utils.adapters.LocalDateTimeAdapter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class JsonUtilities {
 
@@ -31,46 +37,41 @@ public class JsonUtilities {
         return jsonArray;
     }
 
-    public static Object[] jsonArrayToArray(JSONArray jsonArray) {
-        List<Object> list = jsonArray.toList();
-        Object[] billArray = new Object[list.size()];
-        return list.toArray(billArray);
+    public static LocalDateTime getParsedLocalDateTime(String value) {
+        try {
+            return switch (value.length()) {
+                case 19 -> LocalDateTime.parse(value + ".000", DateTimeFormatter.ofPattern(Constants.DATETIME_FORMAT));
+                case 20 -> LocalDateTime.parse(value + "000", DateTimeFormatter.ofPattern(Constants.DATETIME_FORMAT));
+                case 21 -> LocalDateTime.parse(value + "00", DateTimeFormatter.ofPattern(Constants.DATETIME_FORMAT));
+                case 22 -> LocalDateTime.parse(value + "0", DateTimeFormatter.ofPattern(Constants.DATETIME_FORMAT));
+                default -> null;
+            };
+        } catch (Exception ex) {
+            LogUtils.ExceptionHandler(ex);
+            return null;
+        }
     }
 
-		public static Date getDateFromJsonString(String value) {
-			return getDateFromJsonString(value, false);
-		}
-
-    public static Date getDateFromJsonString(String value, Boolean useSecondFormat) {
-        //public static String DATE_FORMAT = "MMMM d, yyyy, hh:mm:ss aa";
-        String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
-				if (useSecondFormat) {
-					DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
-				}
+    public static Time getParsedTime(String value) {
+        // public static String TIME_FORMAT = "hh:mm:ss aa";
 
         if (value == null || value.isEmpty() || value.equals("")) {
             return null;
         }
         try {
-            return new Date((new SimpleDateFormat(DATE_FORMAT)).parse(value).getTime());
+            return new Time((new SimpleDateFormat(Constants.TIME_FORMAT)).parse(value).getTime());
         } catch (ParseException ex) {
             LogUtils.ExceptionHandler(ex);
             return null;
         }
     }
 
-    public static Time getTimeFromJsonString(String value) {
-        //public static String TIME_FORMAT = "hh:mm:ss aa";
-        String TIME_FORMAT = "HH:mm:ss";
+    public static String getJsonStringFromObject(Object object) {
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .create();
 
-        if (value == null || value.isEmpty() || value.equals("")) {
-            return null;
-        }
-        try {
-            return new Time((new SimpleDateFormat(TIME_FORMAT)).parse(value).getTime());
-        } catch (ParseException ex) {
-            LogUtils.ExceptionHandler(ex);
-            return null;
-        }
+        return gson.toJson(object);
     }
 }

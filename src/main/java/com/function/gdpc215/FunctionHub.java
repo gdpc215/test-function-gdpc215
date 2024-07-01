@@ -12,9 +12,11 @@ import com.function.gdpc215.logic.Categories;
 import com.function.gdpc215.logic.Config;
 import com.function.gdpc215.logic.Coupon;
 import com.function.gdpc215.logic.Discount;
+import com.function.gdpc215.logic.Session;
 import com.function.gdpc215.logic.Products;
 import com.function.gdpc215.logic.Table;
 import com.function.gdpc215.logic.User;
+import com.function.gdpc215.utils.JsonUtilities;
 import com.function.gdpc215.utils.LogUtils;
 import com.microsoft.azure.functions.ExecutionContext;
 import com.microsoft.azure.functions.HttpMethod;
@@ -42,26 +44,32 @@ public class FunctionHub {
         String subroute = originalSubroute.toLowerCase();
 
         Object result;
+
         try {
-            switch (route) {
-                case "availability" -> result = Availability.hubAvailability(subroute, request, connectionString);
-                case "bill-details" -> result = BillDetails.hubBillDetails(subroute, request, connectionString);
-                case "bill" -> result = Bills.hubBills(subroute, request, connectionString);
-                case "business" -> result = Business.hubBusiness(subroute, request, connectionString);
-                case "categories" -> result = Categories.hubCategories(subroute, request, connectionString);
-                case "config" -> result = Config.hubConfig(subroute, request, connectionString);
-                case "coupon" -> result = Coupon.hubCoupon(subroute, request, connectionString);
-                case "discount" -> result = Discount.hubDiscount(subroute, request, connectionString);
-                case "products" -> result = Products.hubProducts(subroute, request, connectionString);
-                case "table" -> result = Table.hubTable(subroute, request, connectionString);
-                case "user" -> result = User.hubUser(subroute, request, connectionString);
-                default -> {
-                    return request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
+            if (route.equals("session")) {
+                result = Session.hubLogin(subroute, request, connectionString);
+            }
+            else {
+
+                switch (route) {
+                    case "availability" -> result = Availability.hubAvailability(subroute, request, connectionString);
+                    case "bill-details" -> result = BillDetails.hubBillDetails(subroute, request, connectionString);
+                    case "bill" -> result = Bills.hubBills(subroute, request, connectionString);
+                    case "business" -> result = Business.hubBusiness(subroute, request, connectionString);
+                    case "categories" -> result = Categories.hubCategories(subroute, request, connectionString);
+                    case "config" -> result = Config.hubConfig(subroute, request, connectionString);
+                    case "coupon" -> result = Coupon.hubCoupon(subroute, request, connectionString);
+                    case "discount" -> result = Discount.hubDiscount(subroute, request, connectionString);
+                    case "products" -> result = Products.hubProducts(subroute, request, connectionString);
+                    case "table" -> result = Table.hubTable(subroute, request, connectionString);
+                    case "user" -> result = User.hubUser(subroute, request, connectionString);
+                    default -> {
+                        return request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
+                    }
                 }
             }
         } catch (JSONException e) {
             System.out.println("Path: " + request.getUri().getPath() + " || Error: " + e.getMessage());
-
             LogUtils.ExceptionHandler(e);
             return request
                     .createResponseBuilder(HttpStatus.BAD_REQUEST)
@@ -69,7 +77,6 @@ public class FunctionHub {
                     .build();
         } catch (Exception e) {
             System.out.println("Path: " + request.getUri().getPath() + " || Error: " + e.getMessage());
-
             LogUtils.ExceptionHandler(e);
             return request
                     .createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -96,10 +103,8 @@ public class FunctionHub {
 
             return request
                     .createResponseBuilder(HttpStatus.OK)
-                    .body(result)
+                    .body(JsonUtilities.getJsonStringFromObject(result))
                     .build();
-
         }
-
     }
 }

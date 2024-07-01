@@ -1,8 +1,8 @@
 package com.function.gdpc215.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -18,8 +18,8 @@ public class BillDetailEntity implements Serializable {
     public double amtListedPrice;
     public String strSpecialRequirements;
     public double amtAmount;
-    public Date dateCreation;
-    public Date dateModification;
+    public LocalDateTime dateCreation;
+    public LocalDateTime dateModification;
 
     public BillDetailEntity() {
         this.billDetailId = "";
@@ -28,8 +28,8 @@ public class BillDetailEntity implements Serializable {
         this.amtListedPrice = 0.0;
         this.strSpecialRequirements = "";
         this.amtAmount = 0.0;
-        this.dateCreation = new Date();
-        this.dateModification = new Date();
+        this.dateCreation = LocalDateTime.MIN;
+        this.dateModification = LocalDateTime.MIN;
     }
 
     public BillDetailEntity(JSONObject jsonObject) {
@@ -39,22 +39,8 @@ public class BillDetailEntity implements Serializable {
         this.amtListedPrice = jsonObject.optDouble("amtListedPrice", 0.0);
         this.strSpecialRequirements = jsonObject.optString("strSpecialRequirements");
         this.amtAmount = jsonObject.optDouble("amtAmount", 0.0);
-        this.dateCreation = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateCreation"));
-        this.dateModification = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateModification"));
-
-    }
-
-    public BillDetailEntity(
-            String billDetailId, String billId, String menuItemId, double amtListedPrice,
-            String strSpecialRequirements, double amtAmount, Date dateCreation, Date dateModification) {
-        this.billDetailId = billDetailId;
-        this.billId = billId;
-        this.menuItemId = menuItemId;
-        this.amtListedPrice = amtListedPrice;
-        this.strSpecialRequirements = strSpecialRequirements;
-        this.amtAmount = amtAmount;
-        this.dateCreation = dateCreation;
-        this.dateModification = dateModification;
+        this.dateCreation = JsonUtilities.getParsedLocalDateTime(jsonObject.optString("dateCreation"));
+        this.dateModification = JsonUtilities.getParsedLocalDateTime(jsonObject.optString("dateModification"));
     }
 
     public static List<BillDetailEntity> getCollectionFromJsonArray(JSONArray array) {

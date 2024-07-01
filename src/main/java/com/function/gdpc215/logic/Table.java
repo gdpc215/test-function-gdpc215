@@ -1,26 +1,22 @@
 package com.function.gdpc215.logic;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.List;
 import java.util.Optional;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.function.gdpc215.database.TableDB;
 import com.function.gdpc215.model.TableEntity;
-import com.function.gdpc215.utils.JsonUtilities;
 import com.function.gdpc215.utils.SecurityUtils;
 import com.function.gdpc215.utils.Utils;
 import com.microsoft.azure.functions.HttpRequestMessage;
 import com.microsoft.azure.functions.HttpStatus;
 
 public class Table {
-    
-    public static Object hubTable(String subRoute, HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
+
+    public static Object hubTable(String subRoute, HttpRequestMessage<Optional<String>> request,
+            String connectionString) throws Exception {
         return switch (subRoute) {
             case "get" -> fnTable_GetById(request, connectionString);
             case "get-by-bid" -> fnTable_GetByBusiness(request, connectionString);
@@ -32,136 +28,83 @@ public class Table {
         };
     }
 
-    private static Object fnTable_GetById(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
-        String id = request.getQueryParameters().get("id");
-        
-        if (id.equals("")) {
+    private static Object fnTable_GetById(HttpRequestMessage<Optional<String>> request, String connectionString)
+            throws Exception {
+        String tableId = request.getQueryParameters().get("id");
+        if (tableId.equals("")) {
             return new Exception("ID can't be empty");
-        }
-        else if (!Utils.validateUUID(id)) {
+        } else if (!Utils.validateUUID(tableId)) {
             return new Exception("ID is not a valid UUID");
-        }
-        else {
-            // Prepare statement
-            PreparedStatement spCall = connection.prepareCall("{ call spTable_Get(?) }");
-            spCall.setString(1, request.getQueryParameters().get("id"));
-    
-            // Execute the procedure
-            ResultSet resultSet = spCall.executeQuery();
-            
-            // Read result
-            TableEntity entity = TableEntity.getSingleFromJsonArray(JsonUtilities.resultSetReader(resultSet));
-    
-            return entity != null ? entity : new Exception("Invalid table number");
+        } else {
+            TableEntity entity = TableDB.fnTable_GetById(connectionString, tableId);
+            return entity != null ? entity : new Exception("Invalid table id");
         }
     }
 
-    private static Object fnTable_GetByBusiness(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
-        // Prepare statement
-        PreparedStatement spCall = connection.prepareCall("{ call spTable_GetByBusinessId(?) }");
-        spCall.setString(1, request.getQueryParameters().get("business-id"));
+    private static Object fnTable_GetByBusiness(HttpRequestMessage<Optional<String>> request, String connectionString)
+            throws Exception {
+        String businessId = request.getQueryParameters().get("business-id");
 
-        // Execute the procedure
-        ResultSet resultSet = spCall.executeQuery();
-        
-        // Read result
-        List<TableEntity> entity = TableEntity.getCollectionFromJsonArray(JsonUtilities.resultSetReader(resultSet));
-
-        return entity;
+        List<TableEntity> entities = TableDB.fnTable_GetByBusiness(connectionString, businessId);
+        return entities;
     }
 
-    private static Object fnTable_ValidateTable(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
+    private static Object fnTable_ValidateTable(HttpRequestMessage<Optional<String>> request, String connectionString)
+            throws Exception {
         String businessId = request.getQueryParameters().get("business-id");
         String tableNumber = request.getQueryParameters().get("table-number");
-        
-        if (businessId.equals("") || tableNumber.equals("") ) {
+
+        if (businessId.equals("") || tableNumber.equals("")) {
             return new Exception("Parameters can't be empty");
-        }
-        else {
-            // Prepare statement
-            PreparedStatement spCall = connection.prepareCall("{ call spTable_ValidateTable(?, ?) }");
-            spCall.setString(1, businessId);
-            spCall.setString(2, tableNumber);
-    
-            // Execute the procedure
-            ResultSet resultSet = spCall.executeQuery();
-            
-            // Read result
-            TableEntity entity = TableEntity.getSingleFromJsonArray(JsonUtilities.resultSetReader(resultSet));
-    
+        } else {
+            TableEntity entity = TableDB.fnTable_ValidateTable(connectionString, businessId, tableNumber);
             return !entity.id.equals("") ? entity : new Exception("Invalid table number");
         }
     }
 
-    private static Object fnTable_Insert(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
+    private static Object fnTable_Insert(HttpRequestMessage<Optional<String>> request, String connectionString)
+            throws Exception {
         // Read request body
         Optional<String> body = request.getBody();
         if (SecurityUtils.isValidRequestBody(body)) {
             // Parse JSON request body
-            JSONObject json = new JSONObject(body.get());
-            
-            // Extract parameters from JSON and Prepare statement in a single line
-            CallableStatement spCall = connection.prepareCall("{ call spTable_Insert(?, ?) }");
-            spCall.setString(1, json.optString("businessId"));
-            spCall.setString(2, json.optString("tableNumber"));
-    
-            // Execute insert operation
-            spCall.executeUpdate();
-
+            JSONObject jsonBody = new JSONObject(body.get());
+            TableEntity entity = new TableEntity(jsonBody);
+            TableDB.fnTable_Insert(connectionString, entity);
             return null;
-        }
-        else {
+        } else {
             throw new JSONException("Error al leer el cuerpo de la peticion");
         }
     }
 
-    private static Object fnTable_Update(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
+    private static Object fnTable_Update(HttpRequestMessage<Optional<String>> request, String connectionString)
+            throws Exception {
         // Read request body
         Optional<String> body = request.getBody();
         if (SecurityUtils.isValidRequestBody(body)) {
             // Parse JSON request body
-            JSONObject json = new JSONObject(body.get());
-            
-            // Extract parameters from JSON and Prepare statement in a single line
-            CallableStatement spCall = connection.prepareCall("{ call spTable_Update(?, ?, ?) }");
-            spCall.setString(1, json.optString("id"));
-            spCall.setString(2, json.optString("tableNumber"));
-            spCall.setBoolean(3, json.optBoolean("flgActive"));
-    
-            // Execute update operation
-            spCall.executeUpdate();
-
+            JSONObject jsonBody = new JSONObject(body.get());
+            TableEntity entity = new TableEntity(jsonBody);
+            TableDB.fnTable_Update(connectionString, entity);
             return null;
-        }
-        else {
+        } else {
             throw new JSONException("Error al leer el cuerpo de la peticion");
         }
     }
-    
-    private static Object fnTable_UpdateActiveUsers(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
+
+    private static Object fnTable_UpdateActiveUsers(HttpRequestMessage<Optional<String>> request,
+            String connectionString) throws Exception {
         // Read request body
         Optional<String> body = request.getBody();
         if (SecurityUtils.isValidRequestBody(body)) {
             // Parse JSON request body
-            JSONObject json = new JSONObject(body.get());
-            
-            // Extract parameters from JSON and Prepare statement in a single line
-            CallableStatement spCall = connection.prepareCall("{ call spTable_UpdateActiveUsers(?, ?, ?) }");
-            spCall.setString(1, json.optString("id"));
-            spCall.setBoolean(2, json.optBoolean("flgAction"));
-    
-            // Execute update operation
-            spCall.executeUpdate();
+            JSONObject jsonBody = new JSONObject(body.get());
+            String id = jsonBody.optString("id");
+            Boolean flgAction = jsonBody.optBoolean("strSubDomain");
 
+            TableDB.fnTable_UpdateActiveUsers(connectionString, id, flgAction);
             return null;
-        }
-        else {
+        } else {
             throw new JSONException("Error al leer el cuerpo de la peticion");
         }
     }

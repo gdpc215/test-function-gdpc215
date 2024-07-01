@@ -1,8 +1,8 @@
 package com.function.gdpc215.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -22,10 +22,12 @@ public class BusinessEntity implements Serializable {
     public String strSpecialties;
     public String strAddress;
     public String strContact;
+    public String strMainPageImageUrl;
+    public String strMainPageFullImageUrl;
     public int amtRating;
     public boolean flgActive;
-    public Date dateCreation;
-    public Date dateModification;
+    public LocalDateTime dateCreation;
+    public LocalDateTime dateModification;
 
     public BusinessEntity() {
         this.id = "";
@@ -38,10 +40,12 @@ public class BusinessEntity implements Serializable {
         this.strSpecialties = "";
         this.strAddress = "";
         this.strContact = "";
+        this.strMainPageImageUrl = "";
+        this.strMainPageFullImageUrl = "";
         this.amtRating = 0;
         this.flgActive = false;
-        this.dateCreation = new Date();
-        this.dateModification = new Date();
+        this.dateCreation = LocalDateTime.MIN;
+        this.dateModification = LocalDateTime.MIN;
     }
 
     public BusinessEntity(JSONObject jsonObject) {
@@ -55,30 +59,12 @@ public class BusinessEntity implements Serializable {
         this.strSpecialties = jsonObject.optString("strSpecialties");
         this.strAddress = jsonObject.optString("strAddress");
         this.strContact = jsonObject.optString("strContact");
+        this.strMainPageImageUrl = jsonObject.optString("strMainPageImageUrl");
+        this.strMainPageFullImageUrl = jsonObject.optString("strMainPageFullImageUrl");
         this.amtRating = jsonObject.optInt("amtRating");
         this.flgActive = jsonObject.optBoolean("flgActive");
-        this.dateCreation = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateCreation"));
-        this.dateModification = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateModification"));
-    }
-
-    public BusinessEntity(
-            String id, String strSubDomain, String strName, String strDescription, String strSocials, String strWebPage,
-            String strSegment, String strSpecialties, String strAddress, String strContact, int amtRating, boolean flgActive,
-            Date dateCreation, Date dateModification) {
-        this.id = id;
-        this.strName = strName;
-        this.strSubDomain = strSubDomain;
-        this.strDescription = strDescription;
-        this.strSocials = strSocials;
-        this.strWebPage = strWebPage;
-        this.strSegment = strSegment;
-        this.strSpecialties = strSpecialties;
-        this.strAddress = strAddress;
-        this.strContact = strContact;
-        this.amtRating = amtRating;
-        this.flgActive = flgActive;
-        this.dateCreation = dateCreation;
-        this.dateModification = dateModification;
+        this.dateCreation = JsonUtilities.getParsedLocalDateTime(jsonObject.optString("dateCreation"));
+        this.dateModification = JsonUtilities.getParsedLocalDateTime(jsonObject.optString("dateModification"));
     }
 
     public static List<BusinessEntity> getCollectionFromJsonArray(JSONArray array) {

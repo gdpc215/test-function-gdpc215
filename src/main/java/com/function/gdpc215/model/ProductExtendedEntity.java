@@ -2,7 +2,6 @@ package com.function.gdpc215.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -27,7 +26,7 @@ public class ProductExtendedEntity implements Serializable {
     public boolean flgIsAvailable;
     public boolean flgFinalValidation;
 
-    private String strAvailabilityDetails;
+    public String strAvailabilityDetails;
     public List<AvailabilityEntity> listAvailabilityDetails;
 
     public ProductExtendedEntity() {
@@ -47,41 +46,8 @@ public class ProductExtendedEntity implements Serializable {
 
         this.strAvailabilityDetails = "";
         this.listAvailabilityDetails = new ArrayList<>();
-
     }
 
-    // Constructor accepting all properties as parameters
-    public ProductExtendedEntity(String id, String businessId, String categoryId, String strName,
-            String strDescription, double amtPrice, Integer amtPreparationTime, String flgDispatchType,
-            Double amtMinSaleWeight, String strMinSaleWeightMeasure, boolean flgHasStock, String strImagePath,
-            String strAllergies, String strCaloricInfo, Date dateCreation, Date dateModification,
-            double amtDiscountedPrice, String strWeightDescription, String strDispatchTypeDescription,
-            String strFullImagePath, String strCategoryName, int intCategoryOrderNumber, String strCategoryDayAvailability,
-            boolean flgHasDiscount, boolean flgCategoryValid, boolean flgIsAvailable, boolean flgFinalValidation,
-            String strAvailabilityDetails) {
-
-        this.productEntity = new ProductEntity(
-                id, businessId, categoryId, strName, strDescription, amtPrice, amtPreparationTime, flgDispatchType, amtMinSaleWeight,
-                strMinSaleWeightMeasure, flgHasStock, strImagePath, strAllergies, strCaloricInfo, dateCreation, dateModification
-        );
-
-        this.amtDiscountedPrice = amtDiscountedPrice;
-        this.strWeightDescription = strWeightDescription;
-        this.strDispatchTypeDescription = strDispatchTypeDescription;
-        this.strFullImagePath = strFullImagePath;
-        this.strCategoryName = strCategoryName;
-        this.intCategoryOrderNumber = intCategoryOrderNumber;
-        this.strCategoryDayAvailability = strCategoryDayAvailability;
-        this.flgHasDiscount = flgHasDiscount;
-        this.flgCategoryValid = flgCategoryValid;
-        this.flgIsAvailable = flgIsAvailable;
-        this.flgFinalValidation = flgFinalValidation;
-
-        this.strAvailabilityDetails = strAvailabilityDetails;
-        populateAvailabilityArray();
-    }
-
-    // Constructor that takes a JSONObject object and extracts the values to initialize all variables
     public ProductExtendedEntity(JSONObject jsonObject) {
         try {
             this.productEntity = new ProductEntity(jsonObject);

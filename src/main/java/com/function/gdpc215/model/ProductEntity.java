@@ -1,8 +1,8 @@
 package com.function.gdpc215.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -26,8 +26,8 @@ public class ProductEntity implements Serializable {
     public String strImagePath;
     public String strAllergies;
     public String strCaloricInfo;
-    public Date dateCreation;
-    public Date dateModification;
+    public LocalDateTime dateCreation;
+    public LocalDateTime dateModification;
 
     public ProductEntity() {
         this.id = "";
@@ -44,8 +44,8 @@ public class ProductEntity implements Serializable {
         this.strImagePath = "";
         this.strAllergies = "";
         this.strCaloricInfo = "";
-        this.dateCreation = new Date();
-        this.dateModification = new Date();
+        this.dateCreation = LocalDateTime.MIN;
+        this.dateModification = LocalDateTime.MIN;
     }
 
     public ProductEntity(JSONObject jsonObject) {
@@ -63,32 +63,8 @@ public class ProductEntity implements Serializable {
         this.strImagePath = jsonObject.optString("strImagePath");
         this.strAllergies = jsonObject.optString("strAllergies");
         this.strCaloricInfo = jsonObject.optString("strCaloricInfo");
-        this.dateCreation = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateCreation"));
-        this.dateModification = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateModification"));
-    }
-
-    public ProductEntity(String id, String businessId, String categoryId, String strName,
-            String strDescription, double amtPrice, Integer amtPreparationTime,
-            String flgDispatchType, Double amtMinSaleWeight,
-            String strMinSaleWeightMeasure, boolean flgHasStock, String strImagePath,
-            String strAllergies, String strCaloricInfo, Date dateCreation,
-            Date dateModification) {
-        this.id = id;
-        this.businessId = businessId;
-        this.categoryId = categoryId;
-        this.strName = strName;
-        this.strDescription = strDescription;
-        this.amtPrice = amtPrice;
-        this.amtPreparationTime = amtPreparationTime;
-        this.flgDispatchType = flgDispatchType;
-        this.amtMinSaleWeight = amtMinSaleWeight;
-        this.strMinSaleWeightMeasure = strMinSaleWeightMeasure;
-        this.flgHasStock = flgHasStock;
-        this.strImagePath = strImagePath;
-        this.strAllergies = strAllergies;
-        this.strCaloricInfo = strCaloricInfo;
-        this.dateCreation = dateCreation;
-        this.dateModification = dateModification;
+        this.dateCreation = JsonUtilities.getParsedLocalDateTime(jsonObject.optString("dateCreation"));
+        this.dateModification = JsonUtilities.getParsedLocalDateTime(jsonObject.optString("dateModification"));
     }
 
     public static List<ProductEntity> getCollectionFromJsonArray(JSONArray array) {

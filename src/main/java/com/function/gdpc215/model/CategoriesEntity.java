@@ -1,8 +1,8 @@
 package com.function.gdpc215.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -17,8 +17,8 @@ public class CategoriesEntity implements Serializable {
     public String strName;
     public String strDayAvailability;
     public int orderNumber;
-    public Date dateCreation;
-    public Date dateModification;
+    public LocalDateTime dateCreation;
+    public LocalDateTime dateModification;
 
     public CategoriesEntity() {
         this.id = "";
@@ -26,8 +26,8 @@ public class CategoriesEntity implements Serializable {
         this.strName = "";
         this.strDayAvailability = "";
         this.orderNumber = 0;
-        this.dateCreation = new Date();
-        this.dateModification = new Date();
+        this.dateCreation = LocalDateTime.MIN;
+        this.dateModification = LocalDateTime.MIN;
     }
 
     public CategoriesEntity(JSONObject jsonObject) {
@@ -36,20 +36,8 @@ public class CategoriesEntity implements Serializable {
         this.strName = jsonObject.optString("strName");
         this.strDayAvailability = jsonObject.optString("strDayAvailability");
         this.orderNumber = jsonObject.optInt("orderNumber");
-        this.dateCreation = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateCreation"));
-        this.dateModification = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateModification"));
-    }
-
-    public CategoriesEntity(
-            String id, String businessId, String strName, String strDayAvailability,
-            int orderNumber, Date dateCreation, Date dateModification) {
-        this.id = id;
-        this.businessId = businessId;
-        this.strName = strName;
-        this.strDayAvailability = strDayAvailability;
-        this.orderNumber = orderNumber;
-        this.dateCreation = dateCreation;
-        this.dateModification = dateModification;
+        this.dateCreation = JsonUtilities.getParsedLocalDateTime(jsonObject.optString("dateCreation"));
+        this.dateModification = JsonUtilities.getParsedLocalDateTime(jsonObject.optString("dateModification"));
     }
 
     public static List<CategoriesEntity> getCollectionFromJsonArray(JSONArray array) {

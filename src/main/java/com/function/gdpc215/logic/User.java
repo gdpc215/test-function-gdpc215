@@ -1,27 +1,22 @@
 package com.function.gdpc215.logic;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.Optional;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.function.gdpc215.database.UserDB;
 import com.function.gdpc215.model.UserEntity;
-import com.function.gdpc215.utils.JsonUtilities;
 import com.function.gdpc215.utils.SecurityUtils;
 import com.function.gdpc215.utils.Utils;
 import com.microsoft.azure.functions.HttpRequestMessage;
 import com.microsoft.azure.functions.HttpStatus;
 
 public class User {
-    public static Object hubUser (String subRoute, HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
+    public static Object hubUser(String subRoute, HttpRequestMessage<Optional<String>> request, String connectionString)
+            throws Exception {
         return switch (subRoute) {
             case "get" -> fnUser_GetById(request, connectionString);
-            case "login-with-credentials" -> fnUser_LoginWithCredentials(request, connectionString);
             case "login-from-socials" -> fnUser_LoginFromSocials(request, connectionString);
             case "create-ghost" -> fnUser_CreateGhost(connectionString);
             case "create-from-socials" -> fnUser_CreateFromSocials(request, connectionString);
@@ -31,165 +26,88 @@ public class User {
         };
     }
 
-    private static Object fnUser_GetById(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
-        String id = request.getQueryParameters().get("id");
+    private static Object fnUser_GetById(HttpRequestMessage<Optional<String>> request, String connectionString)
+            throws Exception {
+        String userId = request.getQueryParameters().get("id");
 
-        if (!Utils.validateUUID(id)) { id = ""; }
-        if (id.equals("")) {
+        if (!Utils.validateUUID(userId)) {
+            userId = "";
+        }
+        if (userId.equals("")) {
             return fnUser_CreateGhost(connectionString);
-        }
-        else {
-            // Prepare statement
-            PreparedStatement spCall = connection.prepareCall("{ call spUser_Get(?) }");
-            spCall.setString(1, id);
-
-            // Call procedure
-            ResultSet resultSet = spCall.executeQuery();
-
-            // Cast result to appropiate type
-            UserEntity entity = UserEntity.getSingleFromJsonArray(JsonUtilities.resultSetReader(resultSet));
-            
-            // Returns a ghost user if the id provided doesnt return a valid user 
-            return entity != null ? entity : fnUser_CreateGhost(connectionString);
+        } else {
+            UserEntity entity = UserDB.fnUser_GetById(connectionString, userId);
+            // Returns a ghost user if the id provided doesnt return a valid user
+            if (entity != null) {
+                entity.strPasswordSalt = null;
+                return entity;
+            } else {
+                return fnUser_CreateGhost(connectionString);
+            }
         }
     }
 
-    private static Object fnUser_LoginWithCredentials(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
+    private static Object fnUser_LoginFromSocials(HttpRequestMessage<Optional<String>> request, String connectionString)
+            throws Exception {
         // Read request body
         Optional<String> body = request.getBody();
         if (SecurityUtils.isValidRequestBody(body)) {
             // Parse JSON request body
-            JSONObject json = new JSONObject(body.get());
-            
-            // Extract parameters from JSON and Prepare statement in a single line
-            CallableStatement spCall = connection.prepareCall("{ call spUser_LoginWithCredentials(?, ?) }");
-            spCall.setString(1, json.optString("strEmail"));
-            spCall.setString(2, json.optString("strPassword"));
-    
-            // Call procedure
-            ResultSet resultSet = spCall.executeQuery();
+            JSONObject jsonBody = new JSONObject(body.get());
+            String strEmail = jsonBody.optString("strEmail");
+            String strLoginByProvider = jsonBody.optString("strLoginByProvider");
 
-            // Cast result to appropiate type
-            UserEntity entity = UserEntity.getSingleFromJsonArray(JsonUtilities.resultSetReader(resultSet));
-
+            UserEntity entity = UserDB.fnUser_LoginAttemptWithSocials(connectionString, strEmail, strLoginByProvider);
             return entity;
-        }
-        else {
+        } else {
             throw new JSONException("Error al leer el cuerpo de la peticion");
         }
     }
 
-    private static Object fnUser_LoginFromSocials(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
-        // Read request body
-        Optional<String> body = request.getBody();
-        if (SecurityUtils.isValidRequestBody(body)) {
-            // Parse JSON request body
-            JSONObject json = new JSONObject(body.get());
-            
-            // Extract parameters from JSON and Prepare statement in a single line
-            CallableStatement spCall = connection.prepareCall("{ call spUser_LoginFromSocials(?, ?) }");
-            spCall.setString(1, json.optString("strEmail"));
-            spCall.setString(2, json.optString("strLoginByProvider"));
-    
-            // Call procedure
-            ResultSet resultSet = spCall.executeQuery();
-
-            // Cast to appropiate type
-            UserEntity entity = UserEntity.getSingleFromJsonArray(JsonUtilities.resultSetReader(resultSet));
-            
-            return entity;
-        }
-        else {
-            throw new JSONException("Error al leer el cuerpo de la peticion");
-        }
-    }
-
-    private static Object fnUser_CreateGhost(String connectionString) throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
-        // Prepare statement
-        PreparedStatement spCall = connection.prepareCall("{ call spUser_CreateGhost }");
-
-        // Call procedure
-        ResultSet resultSet = spCall.executeQuery();
-
-        // Cast result to appropiate type
-        UserEntity entity = UserEntity.getSingleFromJsonArray(JsonUtilities.resultSetReader(resultSet));
-
+    private static Object fnUser_CreateGhost(String connectionString)
+            throws Exception {
+        UserEntity entity = UserDB.fnUser_CreateGhost(connectionString);
         return entity;
     }
 
-    private static Object fnUser_CreateFromSocials(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
+    private static Object fnUser_CreateFromSocials(HttpRequestMessage<Optional<String>> request,
+            String connectionString) throws Exception {
         // Read request body
         Optional<String> body = request.getBody();
         if (SecurityUtils.isValidRequestBody(body)) {
             // Parse JSON request body
-            JSONObject json = new JSONObject(body.get());
-            
-            // Extract parameters from JSON and Prepare statement in a single line
-            CallableStatement spCall = connection.prepareCall("{ call spUser_CreateFromSocials(?, ?, ?, ?) }");
-            spCall.setString(1, json.optString("strFirstName"));
-            spCall.setString(2, json.optString("strLastName"));
-            spCall.setString(3, json.optString("strEmail"));
-            spCall.setString(4, json.optString("strLoginByProvider"));
-    
-            // Call procedure
-            ResultSet resultSet = spCall.executeQuery();
+            JSONObject jsonBody = new JSONObject(body.get());
+            UserEntity entity = new UserEntity(jsonBody);
 
             // Cast result to appropiate type
-            UserEntity entity = UserEntity.getSingleFromJsonArray(JsonUtilities.resultSetReader(resultSet));
+            UserEntity returnEntity = UserDB.fnUser_CreateFromSocials(connectionString, entity);
 
-            return entity;
-        }
-        else {
+            return returnEntity;
+        } else {
             throw new JSONException("Error al leer el cuerpo de la peticion");
         }
     }
 
-    private static Object fnUser_Update(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
+    private static Object fnUser_Update(HttpRequestMessage<Optional<String>> request, String connectionString)
+            throws Exception {
         // Read request body
         Optional<String> body = request.getBody();
         if (SecurityUtils.isValidRequestBody(body)) {
-            // Parse JSON request body
-            JSONObject json = new JSONObject(body.get());
-            
-            // Extract parameters from JSON and Prepare statement in a single line
-            CallableStatement spCall = connection.prepareCall("{ call spUser_Update(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }");
-            spCall.setString(1, json.optString("id"));
-            spCall.setString(2, json.optString("strFirstName"));
-            spCall.setString(3, json.optString("strLastName"));
-            spCall.setString(4, json.optString("strEmail"));
-            spCall.setString(5, json.optString("strPassword"));
-            spCall.setString(6, json.optString("strLoginByProvider"));
-            spCall.setString(7, json.optString("dateBirth"));
-            spCall.setString(8, json.optString("strGender"));
-            spCall.setString(9, json.optString("strPhone"));
-            spCall.setString(10, json.optString("strLanguagePreferences"));
-            spCall.setString(11, json.optString("flgAllowNotifications"));
-    
-            // Execute insert operation
-            spCall.executeUpdate();
-
+            JSONObject jsonBody = new JSONObject(body.get());
+            UserEntity entity = new UserEntity(jsonBody);
+            UserDB.fnUser_UpdateInfo(connectionString, entity);
             return null;
-        }
-        else {
+        } else {
             throw new JSONException("Error al leer el cuerpo de la peticion");
         }
     }
 
-    private static Object fnUser_Deactivate(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
-        // Prepare statement
-        PreparedStatement spCall = connection.prepareCall("{ call spUser_Deactivate(?) }");
-        spCall.setString(1, request.getQueryParameters().get("id"));
+    private static Object fnUser_Deactivate(HttpRequestMessage<Optional<String>> request, String connectionString)
+            throws Exception {
+        String categoryId = request.getQueryParameters().get("id");
 
-        // Call procedure
-        spCall.executeUpdate();
-
+        UserDB.fnUser_Deactivate(connectionString, categoryId);
         return null;
     }
+
 }

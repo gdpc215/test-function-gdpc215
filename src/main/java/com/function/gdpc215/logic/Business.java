@@ -1,25 +1,21 @@
 package com.function.gdpc215.logic;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.Optional;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.function.gdpc215.database.BusinessDB;
 import com.function.gdpc215.model.BusinessEntity;
-import com.function.gdpc215.utils.JsonUtilities;
 import com.function.gdpc215.utils.SecurityUtils;
 import com.function.gdpc215.utils.Utils;
 import com.microsoft.azure.functions.HttpRequestMessage;
 import com.microsoft.azure.functions.HttpStatus;
 
 public class Business {
-    
-    public static Object hubBusiness(String subRoute, HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
+
+    public static Object hubBusiness(String subRoute, HttpRequestMessage<Optional<String>> request,
+            String connectionString) throws Exception {
         return switch (subRoute) {
             case "get" -> fnBusiness_GetById(request, connectionString);
             case "get-by-subdomain" -> fnBusiness_GetBySubdomain(request, connectionString);
@@ -31,146 +27,86 @@ public class Business {
         };
     }
 
-    private static Object fnBusiness_GetById(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
-        String id = request.getQueryParameters().get("id");
+    private static Object fnBusiness_GetById(HttpRequestMessage<Optional<String>> request, String connectionString)
+            throws Exception {
+        String businessId = request.getQueryParameters().get("id");
 
-        if (id.equals("")) {
+        if (businessId.equals("")) {
             return new Exception("ID can't be empty");
-        }
-        else if (!Utils.validateUUID(id)) {
+        } else if (!Utils.validateUUID(businessId)) {
             return new Exception("ID is not a valid UUID");
+        } else {
+            BusinessEntity entity = BusinessDB.fnBusiness_GetById(connectionString, businessId);
+            return !entity.id.equals("") ? entity : new Exception("Invalid id");
         }
-        else {
-            // Prepare statement
-            PreparedStatement spCall = connection.prepareCall("{ call spBusiness_Get(?) }");
-            spCall.setString(1, id);
-    
-            // Execute the procedure
-            ResultSet resultSet = spCall.executeQuery();
-            
-            // Read result
-            BusinessEntity entity = BusinessEntity.getSingleFromJsonArray(JsonUtilities.resultSetReader(resultSet));
-            
+    }
+
+    private static Object fnBusiness_GetBySubdomain(HttpRequestMessage<Optional<String>> request,
+            String connectionString) throws Exception {
+        String subdomain = request.getQueryParameters().get("subdomain");
+
+        if (subdomain.equals("")) {
+            return new Exception("Subdomain can't be empty");
+        } else {
+            BusinessEntity entity = BusinessDB.fnBusiness_GetBySubdomain(connectionString, subdomain);
             return !entity.id.equals("") ? entity : new Exception("Invalid subdomain");
         }
     }
 
-    private static Object fnBusiness_GetBySubdomain(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
-        String subdomain = request.getQueryParameters().get("subdomain");
-        
-        if ("".equals(subdomain)) {
-            return new BusinessEntity();
-        }
-        else {
-            // Prepare statement
-            PreparedStatement spCall = connection.prepareCall("{ call spBusiness_GetBySubDomain(?) }");
-            spCall.setString(1, subdomain);
-
-            // Execute the procedure
-            ResultSet resultSet = spCall.executeQuery();
-            
-            // Read result
-            BusinessEntity entity = BusinessEntity.getSingleFromJsonArray(JsonUtilities.resultSetReader(resultSet));
-            
-            return !entity.id.equals("") ? entity : new Exception("Subdominio invalido");
-        }
-    }
-
-    private static Object fnBusiness_Insert(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
+    private static Object fnBusiness_Insert(HttpRequestMessage<Optional<String>> request, String connectionString)
+            throws Exception {
         // Read request body
         Optional<String> body = request.getBody();
         if (SecurityUtils.isValidRequestBody(body)) {
             // Parse JSON request body
-            JSONObject json = new JSONObject(body.get());
-            
-            // Extract parameters from JSON and Prepare statement in a single line
-            CallableStatement spCall = connection.prepareCall("{ call spBusiness_Create(?, ?, ?, ?, ?, ?, ?, ?, ?) }");
-            spCall.setString(1, json.optString("strSubDomain"));
-            spCall.setString(2, json.optString("strName"));
-            spCall.setString(3, json.optString("strDescription"));
-            spCall.setString(4, json.optString("strSocials"));
-            spCall.setString(5, json.optString("strWebPage"));
-            spCall.setString(6, json.optString("strSegment"));
-            spCall.setString(7, json.optString("strSpecialties"));
-            spCall.setString(8, json.optString("strAddress"));
-            spCall.setString(9, json.optString("strContact"));
-    
-            // Execute insert operation
-            spCall.executeUpdate();
+            JSONObject jsonBody = new JSONObject(body.get());
+            BusinessEntity entity = new BusinessEntity(jsonBody);
 
+            BusinessDB.fnBusiness_Insert(connectionString, entity);
             return null;
-        }
-        else {
+        } else {
             throw new JSONException("Error al leer el cuerpo de la peticion");
         }
     }
 
-    private static Object fnBusiness_Update(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
+    private static Object fnBusiness_Update(HttpRequestMessage<Optional<String>> request, String connectionString)
+            throws Exception {
         // Read request body
         Optional<String> body = request.getBody();
         if (SecurityUtils.isValidRequestBody(body)) {
             // Parse JSON request body
-            JSONObject json = new JSONObject(body.get());
-            
-            // Extract parameters from JSON and Prepare statement in a single line
-            CallableStatement spCall = connection.prepareCall("{ call spBusiness_Update(?, ?, ?, ?, ?, ?, ?, ?, ?) }");
-            spCall.setString(1, json.optString("id"));
-            spCall.setString(2, json.optString("strName"));
-            spCall.setString(3, json.optString("strDescription"));
-            spCall.setString(4, json.optString("strSocials"));
-            spCall.setString(5, json.optString("strWebPage"));
-            spCall.setString(6, json.optString("strSegment"));
-            spCall.setString(7, json.optString("strSpecialties"));
-            spCall.setString(8, json.optString("strAddress"));
-            spCall.setString(9, json.optString("strContact"));
-            spCall.setInt(10, json.getInt("amtRating"));
-    
-            // Execute update operation
-            spCall.executeUpdate();
+            JSONObject jsonBody = new JSONObject(body.get());
+            BusinessEntity entity = new BusinessEntity(jsonBody);
 
+            BusinessDB.fnBusiness_Update(connectionString, entity);
             return null;
-        }
-        else {
+        } else {
             throw new JSONException("Error al leer el cuerpo de la peticion");
         }
     }
-    
-    private static Object fnBusiness_UpdateSubDomain(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
+
+    private static Object fnBusiness_UpdateSubDomain(HttpRequestMessage<Optional<String>> request,
+            String connectionString) throws Exception {
         // Read request body
         Optional<String> body = request.getBody();
         if (SecurityUtils.isValidRequestBody(body)) {
             // Parse JSON request body
-            JSONObject json = new JSONObject(body.get());
-            
-            // Extract parameters from JSON and Prepare statement in a single line
-            CallableStatement spCall = connection.prepareCall("{ call spBusiness_UpdateSubDomain(?, ?) }");
-            spCall.setString(1, json.optString("id"));
-            spCall.setString(2, json.optString("strSubDomain"));
-    
-            // Execute update operation
-            spCall.executeUpdate();
+            JSONObject jsonBody = new JSONObject(body.get());
+            String businessId = jsonBody.optString("id");
+            String strSubDomain = jsonBody.optString("strSubDomain");
 
+            BusinessDB.fnBusiness_UpdateSubDomain(connectionString, businessId, strSubDomain);
             return null;
-        }
-        else {
+        } else {
             throw new JSONException("Error al leer el cuerpo de la peticion");
         }
     }
-    
-    private static Object fnBusiness_Deactivate(HttpRequestMessage<Optional<String>> request, String connectionString) throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
-        // Prepare statement
-        PreparedStatement spCall = connection.prepareCall("{ call spBusiness_Deactivate(?) }");
-        spCall.setString(1, request.getQueryParameters().get("id"));
 
-        // Execute the procedure
-        spCall.executeUpdate();
+    private static Object fnBusiness_Deactivate(HttpRequestMessage<Optional<String>> request, String connectionString)
+            throws Exception {
+        String businessId = request.getQueryParameters().get("id");
 
+        BusinessDB.fnBusiness_Deactivate(connectionString, businessId);
         return null;
     }
 }

@@ -2,8 +2,8 @@ package com.function.gdpc215.model;
 
 import java.io.Serializable;
 import java.sql.Time;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -22,10 +22,10 @@ public class AvailabilityEntity implements Serializable {
     public String strAvailableDays;
     public Time timeAvailabilityStart;
     public Time timeAvailabilityEnd;
-    public Date dateValidityStart;
-    public Date dateValidityEnd;
-    public Date dateCreation;
-    public Date dateModification;
+    public LocalDateTime dateValidityStart;
+    public LocalDateTime dateValidityEnd;
+    public LocalDateTime dateCreation;
+    public LocalDateTime dateModification;
 
     public AvailabilityEntity() {
         this.id = "";
@@ -37,10 +37,10 @@ public class AvailabilityEntity implements Serializable {
         this.strAvailableDays = "";
         this.timeAvailabilityStart = new Time(0);
         this.timeAvailabilityEnd = new Time(0);
-        this.dateValidityStart = new Date();
-        this.dateValidityEnd = new Date();
-        this.dateCreation = new Date();
-        this.dateModification = new Date();
+        this.dateValidityStart = LocalDateTime.MIN;
+        this.dateValidityEnd = LocalDateTime.MIN;
+        this.dateCreation = LocalDateTime.MIN;
+        this.dateModification = LocalDateTime.MIN;
     }
 
     public AvailabilityEntity(JSONObject jsonObject) {
@@ -51,31 +51,12 @@ public class AvailabilityEntity implements Serializable {
         this.flgShowDescription = jsonObject.optBoolean("flgShowDescription");
         this.flgActive = jsonObject.optBoolean("flgActive");
         this.strAvailableDays = jsonObject.optString("strAvailableDays");
-        this.timeAvailabilityStart = JsonUtilities.getTimeFromJsonString(jsonObject.optString("timeAvailabilityStart"));
-        this.timeAvailabilityEnd = JsonUtilities.getTimeFromJsonString(jsonObject.optString("timeAvailabilityEnd"));
-        this.dateValidityStart = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateValidityStart"), true);
-        this.dateValidityEnd = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateValidityEnd"), true);
-        this.dateCreation = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateCreation"), true);
-        this.dateModification = JsonUtilities.getDateFromJsonString(jsonObject.optString("dateModification"), true);
-    }
-
-    public AvailabilityEntity(
-            String id, String businessId, String strName, String strDescription, boolean flgShowDescription,
-            boolean flgActive, String strAvailableDays, Time timeAvailabilityStart, Time timeAvailabilityEnd,
-            Date dateValidityStart, Date dateValidityEnd, Date dateCreation, Date dateModification) {
-        this.id = id;
-        this.businessId = businessId;
-        this.strName = strName;
-        this.strDescription = strDescription;
-        this.flgShowDescription = flgShowDescription;
-        this.flgActive = flgActive;
-        this.strAvailableDays = strAvailableDays;
-        this.timeAvailabilityStart = timeAvailabilityStart;
-        this.timeAvailabilityEnd = timeAvailabilityEnd;
-        this.dateValidityStart = dateValidityStart;
-        this.dateValidityEnd = dateValidityEnd;
-        this.dateCreation = dateCreation;
-        this.dateModification = dateModification;
+        this.timeAvailabilityStart = JsonUtilities.getParsedTime(jsonObject.optString("timeAvailabilityStart"));
+        this.timeAvailabilityEnd = JsonUtilities.getParsedTime(jsonObject.optString("timeAvailabilityEnd"));
+        this.dateValidityStart = JsonUtilities.getParsedLocalDateTime(jsonObject.optString("dateValidityStart"));
+        this.dateValidityEnd = JsonUtilities.getParsedLocalDateTime(jsonObject.optString("dateValidityEnd"));
+        this.dateCreation = JsonUtilities.getParsedLocalDateTime(jsonObject.optString("dateCreation"));
+        this.dateModification = JsonUtilities.getParsedLocalDateTime(jsonObject.optString("dateModification"));
     }
 
     public static List<AvailabilityEntity> getCollectionFromJsonArray(JSONArray array) {
