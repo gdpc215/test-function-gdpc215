@@ -12,8 +12,8 @@ import com.function.gdpc215.logic.Categories;
 import com.function.gdpc215.logic.Config;
 import com.function.gdpc215.logic.Coupon;
 import com.function.gdpc215.logic.Discount;
-import com.function.gdpc215.logic.Session;
 import com.function.gdpc215.logic.Products;
+import com.function.gdpc215.logic.Session;
 import com.function.gdpc215.logic.Table;
 import com.function.gdpc215.logic.User;
 import com.function.gdpc215.utils.JsonUtilities;
@@ -38,8 +38,8 @@ public class FunctionHub {
             final ExecutionContext context) {
         context.getLogger().info("Java HTTP trigger processed a request.");
         // String connectionString = System.getenv("KV-CONNECTION-STRING");
-        String connectionString = "jdbc:sqlserver://test-db-gdpc215.database.windows.net:1433;database=testdb;user=fastmenusg@test-db-gdpc215;password=gdpc215-5;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
-
+        //String connectionString = "jdbc:sqlserver://test-db-gdpc215.database.windows.net:1433;database=testdb;user=fastmenusg@test-db-gdpc215;password=gdpc215-5;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
+        String connectionString = "jdbc:sqlserver://localhost;database=testdb;user=fastmenusg;password=gdpc215-5;";
         String route = originalRoute.toLowerCase();
         String subroute = originalSubroute.toLowerCase();
 

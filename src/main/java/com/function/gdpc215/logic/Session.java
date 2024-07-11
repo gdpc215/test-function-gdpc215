@@ -85,13 +85,13 @@ public class Session {
     Optional<String> body = request.getBody();
     if (SecurityUtils.isValidRequestBody(body)) {
       JSONObject jsonBody = new JSONObject(body.get());
-      String token = jsonBody.optString("token");
+      String token = jsonBody.getJSONObject("token").optString("token");
 
       if (token != null && !token.equals("")) {
         // Token is not null nor empty. Identify user and token validity
         UserEntity user = UserDB.fnUser_GetById(connectionString, JwtUtil.getUserId(token, jwtSecretKey));
 
-        if (user != null && user.id != "") {
+        if (user != null && user.id.equals("")) {
           // Usuario valido
           if (!user.flgGhostUser && JwtUtil.isTokenExpired(token, jwtSecretKey)) {
             // Usuario no es ghost y se vencio la validez del token. De nuevo al login.
