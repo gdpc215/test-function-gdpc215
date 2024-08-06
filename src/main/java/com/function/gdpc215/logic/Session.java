@@ -17,6 +17,7 @@ import com.microsoft.azure.functions.HttpRequestMessage;
 import com.microsoft.azure.functions.HttpStatus;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -85,7 +86,8 @@ public class Session {
     Optional<String> body = request.getBody();
     if (SecurityUtils.isValidRequestBody(body)) {
       JSONObject jsonBody = new JSONObject(body.get());
-      String token = jsonBody.getJSONObject("token").optString("token");
+      //String token = jsonBody.getJSONObject("token").optString("token");
+      String token = jsonBody.optString("token");
 
       if (token != null && !token.equals("")) {
         // Token is not null nor empty. Identify user and token validity
@@ -109,7 +111,8 @@ public class Session {
           JSONObject obj = new JSONObject();
           obj.put("token", JwtUtil.generateToken(user, jwtTokenTimeout, jwtSecretKey));
           obj.put("userId", user.id);
-          return obj.toMap();
+          //return obj.toMap();
+          return JwtUtil.generateToken(user, jwtTokenTimeout, jwtSecretKey);
         }
       }
       /**
@@ -122,7 +125,8 @@ public class Session {
       JSONObject obj = new JSONObject();
       obj.put("token", JwtUtil.generateToken(newUser, jwtTokenTimeout, jwtSecretKey));
       obj.put("userId", newUser.id);
-      return obj.toMap();
+      //return obj.toMap();
+      return JwtUtil.generateToken(newUser, jwtTokenTimeout, jwtSecretKey);
     } else {
       throw new JSONException("Error al leer el cuerpo de la peticion");
     }
@@ -162,14 +166,23 @@ public class Session {
 
   public class JwtUtil {
     public static String generateToken(UserEntity userEntity, int timeOut, String secretKey) {
-      return Jwts
+      JwtBuilder tokenBuilder = Jwts
           .builder()
           .setSubject(userEntity.id)
           .claim("isGhostUser", userEntity.flgGhostUser)
           .setIssuedAt(new Date())
-          .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
-          .signWith(SignatureAlgorithm.HS256, secretKey)
-          .compact();
+          .setExpiration(new Date(System.currentTimeMillis() + timeOut))
+          .signWith(SignatureAlgorithm.HS256, secretKey);
+      
+      if (!userEntity.flgGhostUser) {
+        tokenBuilder = tokenBuilder.claim("userName", userEntity.strFirstName);
+      }
+      
+      if (userEntity.flgAdmin) {
+        tokenBuilder = tokenBuilder.claim("isAdmin", userEntity.flgAdmin);
+      }
+
+      return tokenBuilder.compact();
     }
 
     public static String getUserId(String token, String secretKey) {

@@ -26,6 +26,7 @@ public class UserEntity implements Serializable {
     public boolean flgAllowNotifications;
     public boolean flgActiveAccount;
     public boolean flgGhostUser;
+    public boolean flgAdmin;
     public LocalDateTime dateLastLogin;
     public LocalDateTime dateCreation;
     public LocalDateTime dateModification;
@@ -37,19 +38,16 @@ public class UserEntity implements Serializable {
         this.strEmail = "";
         this.strLoginByProvider = "";
         this.dateBirth = LocalDateTime.MIN;
-        ;
         this.strGender = "";
         this.strPhone = "";
         this.strLanguagePreferences = "";
         this.flgAllowNotifications = false;
         this.flgActiveAccount = false;
         this.flgGhostUser = false;
+        this.flgAdmin = false;
         this.dateLastLogin = LocalDateTime.MIN;
-        ;
         this.dateCreation = LocalDateTime.MIN;
-        ;
         this.dateModification = LocalDateTime.MIN;
-        ;
     }
 
     public UserEntity(JSONObject jsonObject) {
@@ -67,6 +65,7 @@ public class UserEntity implements Serializable {
         this.flgAllowNotifications = jsonObject.optBoolean("flgAllowNotifications");
         this.flgActiveAccount = jsonObject.optBoolean("flgActiveAccount");
         this.flgGhostUser = jsonObject.optBoolean("flgGhostUser");
+        this.flgAdmin = jsonObject.optBoolean("flgAdmin");
         this.dateLastLogin = jsonObject.isNull("dateLastLogin") ? null
                 : JsonUtilities.getParsedLocalDateTime(jsonObject.optString("dateLastLogin"));
         this.dateCreation = JsonUtilities.getParsedLocalDateTime(jsonObject.optString("dateCreation"));
