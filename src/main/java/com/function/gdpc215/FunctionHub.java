@@ -29,17 +29,18 @@ import com.microsoft.azure.functions.annotation.FunctionName;
 import com.microsoft.azure.functions.annotation.HttpTrigger;
 
 public class FunctionHub {
-    @FunctionName("HttpExample")
-    public HttpResponseMessage run(
-            @HttpTrigger(name = "req", methods = { HttpMethod.GET,
-                    HttpMethod.POST }, route = "{route}/{subroute}", authLevel = AuthorizationLevel.ANONYMOUS) HttpRequestMessage<Optional<String>> request,
+
+    @FunctionName("SGAPI")
+    public HttpResponseMessage SGAPI(
+            @HttpTrigger(name = "req", methods = {HttpMethod.GET,
+        HttpMethod.POST}, route = "{route}/{subroute}", authLevel = AuthorizationLevel.ANONYMOUS) HttpRequestMessage<Optional<String>> request,
             @BindingName("route") String originalRoute,
             @BindingName("subroute") String originalSubroute,
             final ExecutionContext context) {
         context.getLogger().info("Java HTTP trigger processed a request.");
         // String connectionString = System.getenv("KV-CONNECTION-STRING");
         //String connectionString = "jdbc:sqlserver://test-db-gdpc215.database.windows.net:1433;database=testdb;user=fastmenusg@test-db-gdpc215;password=gdpc215-5;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
-        String connectionString = "jdbc:sqlserver://localhost;database=testdb;user=fastmenusg;password=gdpc215-5;";
+        String connectionString = "jdbc:sqlserver://localhost;database=testdb;user=fastmenusg;password=gdpc215-5;trustServerCertificate=true";
         String route = originalRoute.toLowerCase();
         String subroute = originalSubroute.toLowerCase();
 
@@ -48,21 +49,31 @@ public class FunctionHub {
         try {
             if (route.equals("session")) {
                 result = Session.hubLogin(subroute, request, connectionString);
-            }
-            else {
+            } else {
 
                 switch (route) {
-                    case "availability" -> result = Availability.hubAvailability(subroute, request, connectionString);
-                    case "bill-details" -> result = BillDetails.hubBillDetails(subroute, request, connectionString);
-                    case "bill" -> result = Bills.hubBills(subroute, request, connectionString);
-                    case "business" -> result = Business.hubBusiness(subroute, request, connectionString);
-                    case "categories" -> result = Categories.hubCategories(subroute, request, connectionString);
-                    case "config" -> result = Config.hubConfig(subroute, request, connectionString);
-                    case "coupon" -> result = Coupon.hubCoupon(subroute, request, connectionString);
-                    case "discount" -> result = Discount.hubDiscount(subroute, request, connectionString);
-                    case "products" -> result = Products.hubProducts(subroute, request, connectionString);
-                    case "table" -> result = Table.hubTable(subroute, request, connectionString);
-                    case "user" -> result = User.hubUser(subroute, request, connectionString);
+                    case "availability" ->
+                        result = Availability.hubAvailability(subroute, request, connectionString);
+                    case "bill-details" ->
+                        result = BillDetails.hubBillDetails(subroute, request, connectionString);
+                    case "bill" ->
+                        result = Bills.hubBills(subroute, request, connectionString);
+                    case "business" ->
+                        result = Business.hubBusiness(subroute, request, connectionString);
+                    case "categories" ->
+                        result = Categories.hubCategories(subroute, request, connectionString);
+                    case "config" ->
+                        result = Config.hubConfig(subroute, request, connectionString);
+                    case "coupon" ->
+                        result = Coupon.hubCoupon(subroute, request, connectionString);
+                    case "discount" ->
+                        result = Discount.hubDiscount(subroute, request, connectionString);
+                    case "products" ->
+                        result = Products.hubProducts(subroute, request, connectionString);
+                    case "table" ->
+                        result = Table.hubTable(subroute, request, connectionString);
+                    case "user" ->
+                        result = User.hubUser(subroute, request, connectionString);
                     default -> {
                         return request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
                     }
@@ -106,5 +117,18 @@ public class FunctionHub {
                     .body(JsonUtilities.getJsonStringFromObject(result))
                     .build();
         }
+    }
+
+    @FunctionName("HttpExample")
+    public HttpResponseMessage HttpExample(
+            @HttpTrigger(name = "req", methods = {HttpMethod.GET,
+        HttpMethod.POST}, route = "testing/{route}", authLevel = AuthorizationLevel.ANONYMOUS) HttpRequestMessage<Optional<String>> request,
+            @BindingName("route") String originalRoute,
+            final ExecutionContext context) {
+
+        return request
+                .createResponseBuilder(HttpStatus.OK)
+                .body("Testing a 2nd: " + originalRoute)
+                .build();
     }
 }

@@ -18,7 +18,9 @@ public class UserEntity implements Serializable {
     public String strEmail;
     public String strPassword;
     public String strPasswordSalt;
-    public String strLoginByProvider;
+    public String strProviderName;
+    public String strProviderUserId;
+    public String strProviderPhotoUrl;
     public LocalDateTime dateBirth;
     public String strGender;
     public String strPhone;
@@ -36,7 +38,9 @@ public class UserEntity implements Serializable {
         this.strFirstName = "";
         this.strLastName = "";
         this.strEmail = "";
-        this.strLoginByProvider = "";
+        this.strProviderName = "";
+        this.strProviderUserId = "";
+        this.strProviderPhotoUrl = "";
         this.dateBirth = LocalDateTime.MIN;
         this.strGender = "";
         this.strPhone = "";
@@ -57,7 +61,9 @@ public class UserEntity implements Serializable {
         this.strEmail = jsonObject.optString("strEmail");
         this.strPassword = jsonObject.optString("strPassword");
         this.strPasswordSalt = jsonObject.optString("strPasswordSalt");
-        this.strLoginByProvider = jsonObject.optString("strLoginByProvider");
+        this.strProviderName = jsonObject.optString("strProviderName");
+        this.strProviderUserId = jsonObject.optString("strProviderUserId");
+        this.strProviderPhotoUrl = jsonObject.optString("strProviderPhotoUrl");
         this.dateBirth = JsonUtilities.getParsedLocalDateTime(jsonObject.optString("dateBirth"));
         this.strGender = jsonObject.optString("strGender");
         this.strPhone = jsonObject.optString("strPhone");

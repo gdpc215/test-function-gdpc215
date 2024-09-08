@@ -13,16 +13,24 @@ import com.microsoft.azure.functions.HttpRequestMessage;
 import com.microsoft.azure.functions.HttpStatus;
 
 public class User {
+
     public static Object hubUser(String subRoute, HttpRequestMessage<Optional<String>> request, String connectionString)
             throws Exception {
         return switch (subRoute) {
-            case "get" -> fnUser_GetById(request, connectionString);
-            case "login-from-socials" -> fnUser_LoginFromSocials(request, connectionString);
-            case "create-ghost" -> fnUser_CreateGhost(connectionString);
-            case "create-from-socials" -> fnUser_CreateFromSocials(request, connectionString);
-            case "update" -> fnUser_Update(request, connectionString);
-            case "deactivate" -> fnUser_Deactivate(request, connectionString);
-            default -> request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
+            case "get" ->
+                fnUser_GetById(request, connectionString);
+            case "create-ghost" ->
+                fnUser_CreateGhost(connectionString);
+            case "login-with-email" ->
+                fnUser_LoginWithEmail(request, connectionString);
+            case "login-with-socials" ->
+                fnUser_LoginWithSocials(request, connectionString);
+            case "update" ->
+                fnUser_Update(request, connectionString);
+            case "deactivate" ->
+                fnUser_Deactivate(request, connectionString);
+            default ->
+                request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
         };
     }
 
@@ -47,30 +55,13 @@ public class User {
         }
     }
 
-    private static Object fnUser_LoginFromSocials(HttpRequestMessage<Optional<String>> request, String connectionString)
-            throws Exception {
-        // Read request body
-        Optional<String> body = request.getBody();
-        if (SecurityUtils.isValidRequestBody(body)) {
-            // Parse JSON request body
-            JSONObject jsonBody = new JSONObject(body.get());
-            String strEmail = jsonBody.optString("strEmail");
-            String strLoginByProvider = jsonBody.optString("strLoginByProvider");
-
-            UserEntity entity = UserDB.fnUser_LoginAttemptWithSocials(connectionString, strEmail, strLoginByProvider);
-            return entity;
-        } else {
-            throw new JSONException("Error al leer el cuerpo de la peticion");
-        }
-    }
-
     private static Object fnUser_CreateGhost(String connectionString)
             throws Exception {
         UserEntity entity = UserDB.fnUser_CreateGhost(connectionString);
         return entity;
     }
 
-    private static Object fnUser_CreateFromSocials(HttpRequestMessage<Optional<String>> request,
+    private static Object fnUser_LoginWithEmail(HttpRequestMessage<Optional<String>> request,
             String connectionString) throws Exception {
         // Read request body
         Optional<String> body = request.getBody();
@@ -80,7 +71,25 @@ public class User {
             UserEntity entity = new UserEntity(jsonBody);
 
             // Cast result to appropiate type
-            UserEntity returnEntity = UserDB.fnUser_CreateFromSocials(connectionString, entity);
+            UserEntity returnEntity = UserDB.fnUser_LoginWithSocials(connectionString, entity);
+
+            return returnEntity;
+        } else {
+            throw new JSONException("Error al leer el cuerpo de la peticion");
+        }
+    }
+
+    private static Object fnUser_LoginWithSocials(HttpRequestMessage<Optional<String>> request,
+            String connectionString) throws Exception {
+        // Read request body
+        Optional<String> body = request.getBody();
+        if (SecurityUtils.isValidRequestBody(body)) {
+            // Parse JSON request body
+            JSONObject jsonBody = new JSONObject(body.get());
+            UserEntity entity = new UserEntity(jsonBody);
+
+            // Cast result to appropiate type
+            UserEntity returnEntity = UserDB.fnUser_LoginWithSocials(connectionString, entity);
 
             return returnEntity;
         } else {

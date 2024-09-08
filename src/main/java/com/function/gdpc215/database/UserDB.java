@@ -24,31 +24,6 @@ public class UserDB {
         return UserEntity.getSingleFromJsonArray(JsonUtilities.resultSetReader(resultSet));
     }
 
-    public static UserEntity fnUser_LoginAttemptWithEmail(String connectionString, String email)
-            throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
-        // Prepare statement
-        CallableStatement spCall = connection.prepareCall("{ call spUser_LoginAttemptWithEmail(?) }");
-        spCall.setString(1, email);
-        // Execute operation
-        ResultSet resultSet = spCall.executeQuery();
-        // Cast result to appropiate type
-        return UserEntity.getSingleFromJsonArray(JsonUtilities.resultSetReader(resultSet));
-    }
-
-    public static UserEntity fnUser_LoginAttemptWithSocials(String connectionString, String strEmail,
-            String strLoginByProvider) throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
-        // Prepare statement
-        CallableStatement spCall = connection.prepareCall("{ call spUser_LoginAttemptWithSocials(?, ?) }");
-        spCall.setString(1, strEmail);
-        spCall.setString(2, strLoginByProvider);
-        // Execute operation
-        ResultSet resultSet = spCall.executeQuery();
-        // Cast result to appropiate type
-        return UserEntity.getSingleFromJsonArray(JsonUtilities.resultSetReader(resultSet));
-    }
-
     public static UserEntity fnUser_CreateGhost(String connectionString)
             throws Exception {
         Connection connection = DriverManager.getConnection(connectionString);
@@ -60,15 +35,29 @@ public class UserDB {
         return UserEntity.getSingleFromJsonArray(JsonUtilities.resultSetReader(resultSet));
     }
 
-    public static UserEntity fnUser_CreateFromSocials(String connectionString, UserEntity entity)
+    public static UserEntity fnUser_LoginWithEmail(String connectionString, String email)
             throws Exception {
         Connection connection = DriverManager.getConnection(connectionString);
         // Prepare statement
-        CallableStatement spCall = connection.prepareCall("{ call spUser_CreateFromSocials(?, ?, ?, ?) }");
+        CallableStatement spCall = connection.prepareCall("{ call spUser_LoginWithEmail(?) }");
+        spCall.setString(1, email);
+        // Execute operation
+        ResultSet resultSet = spCall.executeQuery();
+        // Cast result to appropiate type
+        return UserEntity.getSingleFromJsonArray(JsonUtilities.resultSetReader(resultSet));
+    }
+
+    public static UserEntity fnUser_LoginWithSocials(String connectionString, UserEntity entity)
+            throws Exception {
+        Connection connection = DriverManager.getConnection(connectionString);
+        // Prepare statement
+        CallableStatement spCall = connection.prepareCall("{ call spUser_LoginWithSocials(?, ?, ?, ?, ?, ?) }");
         spCall.setString(1, entity.strFirstName);
         spCall.setString(2, entity.strLastName);
         spCall.setString(3, entity.strEmail);
-        spCall.setString(4, entity.strLoginByProvider);
+        spCall.setString(4, entity.strProviderName);
+        spCall.setString(5, entity.strProviderUserId);
+        spCall.setString(6, entity.strProviderPhotoUrl);
         // Execute operation
         ResultSet resultSet = spCall.executeQuery();
         // Cast result to appropiate type

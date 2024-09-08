@@ -58,7 +58,7 @@ public class Session {
       String strEmail = jsonBody.optString("strEmail");
       String strPassword = jsonBody.optString("strPassword");
 
-      UserEntity entity = UserDB.fnUser_LoginAttemptWithEmail(connectionString, strEmail);
+      UserEntity entity = UserDB.fnUser_LoginWithEmail(connectionString, strEmail);
       if (entity != null) {
         String hashedPassword = UserUtils.getHashedPassword(strPassword, entity.strPasswordSalt);
         if (entity.strPassword.equals(hashedPassword)) {
