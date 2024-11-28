@@ -14,7 +14,7 @@ public class ProductExtendedEntity implements Serializable {
 
     public ProductEntity productEntity;
 
-    public double amtDiscountedPrice;
+    public double amtListedPrice;
     public String strWeightDescription;
     public String strDispatchTypeDescription;
     public String strFullImagePath;
@@ -32,7 +32,7 @@ public class ProductExtendedEntity implements Serializable {
     public ProductExtendedEntity() {
         this.productEntity = new ProductEntity();
 
-        this.amtDiscountedPrice = 0;
+        this.amtListedPrice = 0;
         this.strWeightDescription = "";
         this.strDispatchTypeDescription = "";
         this.strFullImagePath = "";
@@ -52,7 +52,7 @@ public class ProductExtendedEntity implements Serializable {
         try {
             this.productEntity = new ProductEntity(jsonObject);
 
-            this.amtDiscountedPrice = jsonObject.optDouble("amtDiscountedPrice", 0.0);
+            this.amtListedPrice = jsonObject.optDouble("amtListedPrice", 0.0);
             this.strWeightDescription = jsonObject.optString("strWeightDescription");
             this.strDispatchTypeDescription = jsonObject.optString("strDispatchTypeDescription");
             this.strFullImagePath = jsonObject.optString("strFullImagePath");

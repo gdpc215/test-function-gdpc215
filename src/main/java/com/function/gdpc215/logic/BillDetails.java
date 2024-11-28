@@ -25,7 +25,6 @@ public class BillDetails {
             case "insert" -> fnBillDetails_Insert(request, connectionString);
             case "update" -> fnBillDetails_Update(request, connectionString);
             case "delete" -> fnBillDetails_Delete(request, connectionString);
-            case "clear" -> fnBillDetails_Clear(request, connectionString);
             default -> request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
         };
     }
@@ -98,14 +97,6 @@ public class BillDetails {
         String billDetailId = request.getQueryParameters().get("id");
 
         BillDetailsDB.fnBillDetails_Delete(connectionString, billDetailId);
-        return null;
-    }
-
-    private static Object fnBillDetails_Clear(HttpRequestMessage<Optional<String>> request, String connectionString)
-            throws Exception {
-        String billId = request.getQueryParameters().get("bill-id");
-
-        BillDetailsDB.fnBillDetails_Clear(connectionString, billId);
         return null;
     }
 }

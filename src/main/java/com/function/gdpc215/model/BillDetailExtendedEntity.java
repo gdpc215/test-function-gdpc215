@@ -30,9 +30,9 @@ public class BillDetailExtendedEntity implements Serializable {
         this.strWeightDescription = "";
     }
 
-    public BillDetailExtendedEntity(JSONObject jsonObject) {
+    public BillDetailExtendedEntity(JSONObject jsonObject, boolean sameLevelData) {
         try {
-            this.billDetailsEntity = new BillDetailEntity(jsonObject);
+            this.billDetailsEntity = new BillDetailEntity((sameLevelData) ? jsonObject : jsonObject.optJSONObject("billDetailsEntity"));
 
             this.strName = jsonObject.optString("strName");
             this.fullImgPath = jsonObject.optString("fullImgPath");
@@ -46,35 +46,35 @@ public class BillDetailExtendedEntity implements Serializable {
         }
     }
     
-    public static List<BillDetailExtendedEntity> getCollectionFromJsonArray(JSONArray array) {
+    public static List<BillDetailExtendedEntity> getCollectionFromJsonArray(JSONArray array, boolean sameLevelData) {
         List<BillDetailExtendedEntity> entities = new ArrayList<>();
         array.forEach((Object obj) -> {
-            entities.add(new BillDetailExtendedEntity((JSONObject) obj));
+            entities.add(new BillDetailExtendedEntity((JSONObject) obj, sameLevelData));
         });
         return entities;
     }
     
-    public static List<BillDetailEntity> getBaseObjCollectionFromJsonArray(JSONArray array) {
+    public static List<BillDetailEntity> getBaseObjCollectionFromJsonArray(JSONArray array, boolean sameLevelData) {
         List<BillDetailEntity> entities = new ArrayList<>();
         array.forEach((Object obj) -> {
-            BillDetailEntity ent = (new BillDetailExtendedEntity((JSONObject) obj)).billDetailsEntity;
+            BillDetailEntity ent = (new BillDetailExtendedEntity((JSONObject) obj, sameLevelData)).billDetailsEntity;
             entities.add(ent);
         });
         return entities;
     }
     
-    public static BillDetailExtendedEntity getSingleFromJsonArray(JSONArray array) {
+    public static BillDetailExtendedEntity getSingleFromJsonArray(JSONArray array, boolean sameLevelData) {
         BillDetailExtendedEntity entity = null;
-        List<BillDetailExtendedEntity> entities = getCollectionFromJsonArray(array);
+        List<BillDetailExtendedEntity> entities = getCollectionFromJsonArray(array, sameLevelData);
         if (!entities.isEmpty()) {
             entity = entities.get(0);
         }
         return entity;
     }
     
-    public static BillDetailEntity getBaseObjSingleFromJsonArray(JSONArray array) {
+    public static BillDetailEntity getBaseObjSingleFromJsonArray(JSONArray array, boolean sameLevelData) {
         BillDetailEntity entity = null;
-        List<BillDetailEntity> entities = getBaseObjCollectionFromJsonArray(array);
+        List<BillDetailEntity> entities = getBaseObjCollectionFromJsonArray(array, sameLevelData);
         if (!entities.isEmpty()) {
             entity = entities.get(0);
         }

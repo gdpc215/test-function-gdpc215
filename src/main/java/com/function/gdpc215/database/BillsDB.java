@@ -35,18 +35,28 @@ public class BillsDB {
         return BillEntity.getCollectionFromJsonArray(JsonUtilities.resultSetReader(resultSet));
     }
 
+    public static List<BillEntity> fnBills_GetActiveByBusinessId(String connectionString, String businessId)
+            throws Exception {
+        Connection connection = DriverManager.getConnection(connectionString);
+        // Prepare statement
+        PreparedStatement spCall = connection.prepareCall("{ call spBills_GetActiveByBusinessId(?) }");
+        spCall.setString(1, businessId);
+        // Execute operation
+        ResultSet resultSet = spCall.executeQuery();
+        // Cast result to appropiate type
+        return BillEntity.getCollectionFromJsonArray(JsonUtilities.resultSetReader(resultSet));
+    }
+
     public static void fnBills_UpdateBill(String connectionString, BillEntity entity)
             throws Exception {
         Connection connection = DriverManager.getConnection(connectionString);
         // Prepare statement and set parameters
-        PreparedStatement spCall = connection.prepareCall("{ call spBills_UpdateBill(?, ?, ?, ?, ?, ?, ?) }");
+        PreparedStatement spCall = connection.prepareCall("{ call spBills_UpdateBill(?, ?, ?, ?, ?) }");
         spCall.setString(1, entity.billId);
         spCall.setString(2, entity.tableId);
-        spCall.setBoolean(3, entity.billState);
+        spCall.setInt(3, entity.billState);
         spCall.setString(4, entity.couponId);
-        spCall.setDouble(5, entity.amtTotalTab);
-        spCall.setDouble(6, entity.amtTip);
-        spCall.setDouble(7, entity.amtTotalChargeable);
+        spCall.setDouble(5, entity.amtTip);
         // Execute operation
         spCall.executeUpdate();
     }
@@ -63,6 +73,16 @@ public class BillsDB {
         ResultSet resultSet = spCall.executeQuery();
         // Cast result to appropiate type
         return BillEntity.getSingleFromJsonArray(JsonUtilities.resultSetReader(resultSet));
+    }
+
+    public static void fnBills_ClearBill(String connectionString, String billId)
+            throws Exception {
+        Connection connection = DriverManager.getConnection(connectionString);
+        // Prepare statement and set parameters
+        PreparedStatement spCall = connection.prepareCall("{ call spBills_ClearBill(?) }");
+        spCall.setString(1, billId);
+        // Execute operation
+        spCall.executeUpdate();
     }
 
     public static void fnBills_CalculateTabAmount(String connectionString, String billId)
@@ -99,12 +119,13 @@ public class BillsDB {
         spCall.executeUpdate();
     }
 
-    public static void fnBills_CloseBill(String connectionString, String billId)
+    public static void fnBills_ChangeState(String connectionString, String billId, int newBillState)
             throws Exception {
         Connection connection = DriverManager.getConnection(connectionString);
         // Prepare statement and set parameters
-        PreparedStatement spCall = connection.prepareCall("{ call spBills_CloseBill(?) }");
+        PreparedStatement spCall = connection.prepareCall("{ call spBills_ChangeState(?, ?) }");
         spCall.setString(1, billId);
+        spCall.setInt(2, newBillState);
         // Execute operation
         spCall.executeUpdate();
     }

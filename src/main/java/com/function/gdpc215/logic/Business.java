@@ -1,6 +1,7 @@
 package com.function.gdpc215.logic;
 
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,6 +45,9 @@ public class Business {
     private static Object fnBusiness_GetBySubdomain(HttpRequestMessage<Optional<String>> request,
             String connectionString) throws Exception {
         String subdomain = request.getQueryParameters().get("subdomain");
+
+        String timeout = request.getQueryParameters().get("timeout");
+        TimeUnit.SECONDS.sleep(timeout.matches("-?\\d+") ? Integer.parseInt(timeout) : 0);
 
         if (subdomain.equals("")) {
             return new Exception("Subdomain can't be empty");

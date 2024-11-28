@@ -52,10 +52,11 @@ public class ConfigDB {
             throws Exception {
         Connection connection = DriverManager.getConnection(connectionString);
         // Prepare statement
-        CallableStatement spCall = connection.prepareCall("{ call spConfig_Update(?, ?, ?) }");
+        CallableStatement spCall = connection.prepareCall("{ call spConfig_Update(?, ?, ?, ?) }");
         spCall.setString(1, entity.id);
-        spCall.setString(2, entity.strValue);
-        spCall.setString(3, entity.strDescription);
+        spCall.setString(2, entity.businessId);
+        spCall.setString(3, entity.strValue);
+        spCall.setString(4, entity.strDescription);
         // Execute operation
         spCall.executeUpdate();
     }

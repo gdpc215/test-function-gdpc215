@@ -16,7 +16,9 @@ public class BillEntity implements Serializable {
     public String businessId;
     public String userId;
     public String tableId;
-    public boolean billState;
+    public int billState;
+    public int billGeneralState;
+    public String billStateDescription;
     public String couponId;
     public double amtTotalTab;
     public double amtTip;
@@ -31,7 +33,9 @@ public class BillEntity implements Serializable {
         this.businessId = "";
         this.userId = "";
         this.tableId = "";
-        this.billState = false;
+        this.billState = 0;
+        this.billGeneralState = 0;
+        this.billStateDescription = "";
         this.couponId = "";
         this.amtTotalTab = 0.0;
         this.amtTip = 0.0;
@@ -48,7 +52,9 @@ public class BillEntity implements Serializable {
         this.businessId = jsonObject.optString("businessId");
         this.userId = jsonObject.optString("userId");
         this.tableId = jsonObject.optString("tableId");
-        this.billState = jsonObject.optBoolean("billState");
+        this.billState = jsonObject.optInt("billState");
+        this.billGeneralState = jsonObject.optInt("billGeneralState");
+        this.billStateDescription = jsonObject.optString("billStateDescription");
         this.couponId = jsonObject.optString("couponId");
         this.amtTotalTab = jsonObject.optDouble("amtTotalTab", 0.0);
         this.amtTip = jsonObject.optDouble("amtTip", 0.0);

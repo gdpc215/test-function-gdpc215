@@ -44,6 +44,7 @@ public class JsonUtilities {
                 case 20 -> LocalDateTime.parse(value + "000", DateTimeFormatter.ofPattern(Constants.DATETIME_FORMAT));
                 case 21 -> LocalDateTime.parse(value + "00", DateTimeFormatter.ofPattern(Constants.DATETIME_FORMAT));
                 case 22 -> LocalDateTime.parse(value + "0", DateTimeFormatter.ofPattern(Constants.DATETIME_FORMAT));
+                case 23 -> LocalDateTime.parse(value, DateTimeFormatter.ofPattern(Constants.DATETIME_FORMAT));
                 default -> null;
             };
         } catch (Exception ex) {

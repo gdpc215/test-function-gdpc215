@@ -35,7 +35,7 @@ public class BillDetailsDB {
         // Execute operation
         ResultSet resultSet = spCall.executeQuery();
         // Cast result to appropiate type
-        return BillDetailExtendedEntity.getSingleFromJsonArray(JsonUtilities.resultSetReader(resultSet));
+        return BillDetailExtendedEntity.getSingleFromJsonArray(JsonUtilities.resultSetReader(resultSet), false);
     }
 
     public static List<BillDetailEntity> fnBillDetails_GetByBill(String connectionString, String billId)
@@ -58,8 +58,9 @@ public class BillDetailsDB {
         spCall.setString(1, billId);
         // Execute operation
         ResultSet resultSet = spCall.executeQuery();
+        
         // Cast result to appropiate type
-        return BillDetailExtendedEntity.getCollectionFromJsonArray(JsonUtilities.resultSetReader(resultSet));
+        return BillDetailExtendedEntity.getCollectionFromJsonArray(JsonUtilities.resultSetReader(resultSet), true);
     }
 
     public static void fnBillDetails_Insert(String connectionString, BillDetailEntity entity)
@@ -117,16 +118,6 @@ public class BillDetailsDB {
         // Prepare statement
         PreparedStatement spCall = connection.prepareCall("{ call spBillDetails_Delete(?) }");
         spCall.setString(1, billDetailId);
-        // Execute operation
-        spCall.executeUpdate();
-    }
-
-    public static void fnBillDetails_Clear(String connectionString, String billId)
-            throws Exception {
-        Connection connection = DriverManager.getConnection(connectionString);
-        // Prepare statement
-        PreparedStatement spCall = connection.prepareCall("{ call spBillDetails_Clear(?) }");
-        spCall.setString(1, billId);
         // Execute operation
         spCall.executeUpdate();
     }
