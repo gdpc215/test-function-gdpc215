@@ -6,6 +6,7 @@ import org.json.JSONException;
 
 import com.function.gdpc215.logic.Availability;
 import com.function.gdpc215.logic.BillDetails;
+import com.function.gdpc215.logic.BillState;
 import com.function.gdpc215.logic.Bills;
 import com.function.gdpc215.logic.Business;
 import com.function.gdpc215.logic.Categories;
@@ -58,6 +59,8 @@ public class FunctionHub {
                         result = BillDetails.hubBillDetails(subroute, request, connectionString);
                     case "bill" ->
                         result = Bills.hubBills(subroute, request, connectionString);
+                    case "bill-state" ->
+                        result = BillState.hubBillState(subroute, request, connectionString);
                     case "business" ->
                         result = Business.hubBusiness(subroute, request, connectionString);
                     case "categories" ->
