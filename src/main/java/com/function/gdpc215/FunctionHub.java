@@ -1,6 +1,7 @@
 package com.function.gdpc215;
 
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import org.json.JSONException;
 
@@ -32,6 +33,7 @@ import com.microsoft.azure.functions.annotation.HttpTrigger;
 public class FunctionHub {
 
     @FunctionName("SGAPI")
+    @SuppressWarnings("UseSpecificCatch")
     public HttpResponseMessage SGAPI(
             @HttpTrigger(name = "req", methods = {HttpMethod.GET,
         HttpMethod.POST}, route = "{route}/{subroute}", authLevel = AuthorizationLevel.ANONYMOUS) HttpRequestMessage<Optional<String>> request,
@@ -46,6 +48,11 @@ public class FunctionHub {
         String subroute = originalSubroute.toLowerCase();
 
         Object result;
+
+        try {
+            String timeout = request.getQueryParameters().get("timeout");
+            TimeUnit.SECONDS.sleep(timeout.matches("-?\\d+") ? Integer.parseInt(timeout) : 0);
+        } catch (Exception ex) { }
 
         try {
             if (route.equals("session")) {

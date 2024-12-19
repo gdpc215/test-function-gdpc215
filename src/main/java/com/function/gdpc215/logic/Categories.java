@@ -3,6 +3,7 @@ package com.function.gdpc215.logic;
 import java.util.List;
 import java.util.Optional;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,13 +18,20 @@ public class Categories {
     public static Object hubCategories(String subRoute, HttpRequestMessage<Optional<String>> request,
             String connectionString) throws Exception {
         return switch (subRoute) {
-            case "get" -> fnCategories_GetById(request, connectionString);
-            case "get-by-bid" -> fnCategories_GetByBusiness(request, connectionString);
-            case "insert" -> fnCategories_Insert(request, connectionString);
-            case "update" -> fnCategories_Update(request, connectionString);
-            case "change-order" -> fnCategories_ChangeOrderNumber(request, connectionString);
-            case "delete" -> fnCategories_Delete(request, connectionString);
-            default -> request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
+            case "get" ->
+                fnCategories_GetById(request, connectionString);
+            case "get-by-bid" ->
+                fnCategories_GetByBusiness(request, connectionString);
+            case "insert" ->
+                fnCategories_Insert(request, connectionString);
+            case "update" ->
+                fnCategories_Update(request, connectionString);
+            case "change-order" ->
+                fnCategories_ChangeOrderNumber(request, connectionString);
+            case "delete" ->
+                fnCategories_Delete(request, connectionString);
+            default ->
+                request.createResponseBuilder(HttpStatus.NOT_FOUND).build();
         };
     }
 
@@ -79,12 +87,14 @@ public class Categories {
         Optional<String> body = request.getBody();
         if (SecurityUtils.isValidRequestBody(body)) {
             // Parse JSON request body
-            JSONObject jsonBody = new JSONObject(body.get());
+            JSONArray jsonArray = new JSONArray(body.get());
 
-            String categoryId = jsonBody.optString("categoryId");
-            Integer newOrderNumber = jsonBody.optInt("newOrderNumber");
-
-            CategoriesDB.fnCategories_ChangeOrderNumber(connectionString, categoryId, newOrderNumber);
+            // Iterate over the JSONArray
+            for (int i = 0; i < jsonArray.length(); i++) {
+                CategoriesEntity category = new CategoriesEntity(jsonArray.getJSONObject(i));
+                CategoriesDB.fnCategories_ChangeOrderNumber(connectionString, category.id, category.orderNumber);
+            }
+            
             return null;
         } else {
             throw new JSONException("Error al leer el cuerpo de la peticion");
